@@ -79,8 +79,8 @@ normed.eliminate_zeros()
 normed = normed.tocoo()
 
 # Compute starting point
+print "Initializing"
 random_state = np.random.RandomState(args.seed)
-
 X = mds.estimate_X(normed, random_state=random_state)
 X[np.isnan(X)] = 0
 
