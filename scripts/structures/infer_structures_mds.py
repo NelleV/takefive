@@ -87,7 +87,7 @@ random_state = np.random.RandomState(args.seed)
 
 wd = compute_wish_distances(normed)
 X = mds.estimate_X(wd, random_state=random_state,
-                   precompute_distances=True)
+                   precompute_distances="precomputed")
 
 # PM2
 outname = filename.replace(
