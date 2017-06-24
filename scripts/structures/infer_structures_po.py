@@ -4,10 +4,7 @@ import os
 import argparse
 from pastis import fastio
 from minorswing import dispersion
-#from minorswing._inference import negative_binomial
-from minorswing._inference import negative_binomial_structure
-#from pastis.optimization import negative_binomial_structure
-from minorswing._inference import poisson_inference
+from minorswing._inference import poisson_structure
 from pastis.optimization import mds
 from minorswing._inference import utils
 import iced
