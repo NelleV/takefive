@@ -7,10 +7,10 @@ from minorswing import dispersion
 #from minorswing._inference import negative_binomial
 from minorswing._inference import negative_binomial_structure
 #from pastis.optimization import negative_binomial_structure
-from minorswing._inference import poisson_inference
 from pastis.optimization import mds
 from minorswing._inference import utils
 import iced
+from utils import compute_wish_distances
 
 """
 Launches the inference of the 3D model on .matrix/.bed files"""
@@ -61,8 +61,9 @@ counts[np.arange(len(counts)), np.arange(len(counts))] = 0
 counts = iced.filter.filter_low_counts(
     counts, lengths=lengths,
     sparsity=False, percentage=0.03)
-normed, bias = iced.normalization.ICE_normalization(counts,
-                                                    output_bias=True)
+normed, bias = iced.normalization.ICE_normalization(
+    counts,
+    output_bias=True)
 
 counts[np.isnan(counts)] = 0
 normed[np.isnan(normed)] = 0
@@ -80,29 +81,17 @@ normed.eliminate_zeros()
 normed = normed.tocoo()
 
 # Compute starting point
-print "Initializing"
+print "Estimating structure"
+
 random_state = np.random.RandomState(args.seed)
-X = mds.estimate_X(normed, random_state=random_state)
-X[np.isnan(X)] = 0
+
+wd = compute_wish_distances(normed)
+X = mds.estimate_X(wd, random_state=random_state,
+                   precompute_distances=True)
 
 # PM2
 outname = filename.replace(
-    ".matrix", "_PO_%02d_structure.txt" % (args.seed, ))
-
-if os.path.exists(outname):
-    print "Already computed"
-    import sys
-    sys.exit()
-
-alpha = -3.
-max_iter = 1000000
-
-counts = counts.tocoo()
-X = poisson_structure.estimate_X(
-    counts, alpha=-3., beta=1., bias=bias,
-    verbose=1,
-    maxiter=max_iter,
-    ini=X.flatten())
+    ".matrix", "_MDS_%02d_structure.txt" % (args.seed, ))
 
 counts = np.array(counts.todense())
 mask = (np.array(counts.sum(axis=0)) +
