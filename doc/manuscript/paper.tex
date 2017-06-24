@@ -1,0 +1,124 @@
+\documentclass[oupdraft]{bio}
+% \usepackage[colorlinks=true, urlcolor=citecolor, linkcolor=citecolor, citecolor=citecolor]{hyperref}
+\usepackage{url}
+
+% Add history information for the article if required
+\history{Received XXX;
+revised XXX;
+accepted for publication XXX}
+
+
+\newcommand{\todo}[1]{\textbf{[TODO: #1]}}
+\newcommand{\note}[1]{\textbf{[NOTE: #1]}}
+\newcommand{\fixme}[1]{\textbf{[FIXME: #1]}}
+
+\begin{document}
+
+% Title of paper
+\title{Exploration of empirical Bayes hierarchical modeling for the
+analysis of genome-wide association study data}
+
+% List of authors, with corresponding author marked by asterisk
+\author{Nelle Varoquaux$^\ast$,\\[4pt]
+% Author addresses
+\textit{Department of Statistics, University of California, Berkeley \\
+Berkeley Data Science Fellow}
+\\[2pt]
+% E-mail address for correspondence
+{eaheron@tcd.ie}}
+
+% Running headers of paper:
+\markboth%
+% First field is the short list of authors
+{Nelle Varoquaux}
+% Second field is the short title of the paper
+{XXX}
+
+\maketitle
+
+% Add a footnote for the corresponding author if one has been
+% identified in the author list
+\footnotetext{To whom correspondence should be addressed.}
+
+\begin{abstract}
+{My very cool abstract.}
+{Hi-C; three-dimensional structure; and other cool stuff.
+}
+\end{abstract}
+
+
+\section{Introduction}
+\label{sec1}
+
+
+\section{Methods}
+\label{sec2}
+
+
+
+\subsection{Analysing contact count data}
+- compartment analysis
+- extracting some relationships between counts genomic distances etc
+- fit-HiC
+
+\subsection{3D structure inference}
+- MDS
+- PO
+- NB
+
+\subsubsection{Structure stability}
+- Structure stability
+- 
+\subsubsection{Volume exclusion models}
+\subsection{Integrative analysis of gene expression and 3D structure using KernelCCA}
+
+\subsection{Differential analysis}
+\note{XXX only possible if Bunnik 2017 paper published.}
+
+\section{Results}
+\label{sec3}
+
+\subsection{Simulation study application}
+
+\section{Discussion}
+\label{sec4}
+
+
+
+\section{Software}
+\label{sec5}
+
+Software in the form of R code, together with a sample
+input data set and complete documentation is available on
+request from the corresponding author (eaheron@tcd.ie).
+
+
+\section{Supplementary Material}
+\label{sec6}
+
+Supplementary material is available online at
+% \href{http://biostatistics.oxfordjournals.org}%
+% {http://biostatistics.oxfordjournals.org}.
+\url{http://biostatistics.oxfordjournals.org}.
+
+
+\section*{Acknowledgments}
+
+The authors thank XXX
+
+Funding for the project was provided by BIDS.
+{\it Conflict of Interest}: None declared.
+
+
+\bibliographystyle{biorefs}
+\bibliography{refs}
+
+
+\begin{figure}[!p]
+\centering
+%\includegraphics{fig1}
+\caption{}
+\label{Fig1}
+\end{figure}
+
+\end{document}
