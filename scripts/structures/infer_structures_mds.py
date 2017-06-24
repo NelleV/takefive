@@ -27,12 +27,12 @@ if args.filename.startswith("data"):
 else:
     filename = args.filename
 
-# Create name tag
-algo = "UNB"
-algo = algo + "0"
 
 outname = filename.replace(
-    ".matrix", "_%s_%02d_structure.txt" % (algo, args.seed))
+    ".matrix", "_MDS_%02d_structure.txt" % (args.seed, ))
+if os.path.exists(outname):
+    import sys
+    sys.exit(0)
 
 try:
     os.makedirs(os.path.dirname(filename))
@@ -88,10 +88,6 @@ random_state = np.random.RandomState(args.seed)
 wd = compute_wish_distances(normed)
 X = mds.estimate_X(wd, random_state=random_state,
                    precompute_distances="precomputed")
-
-# PM2
-outname = filename.replace(
-    ".matrix", "_MDS_%02d_structure.txt" % (args.seed, ))
 
 counts = np.array(counts.todense())
 mask = (np.array(counts.sum(axis=0)) +

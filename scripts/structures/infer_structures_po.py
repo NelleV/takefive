@@ -24,12 +24,11 @@ if args.filename.startswith("data"):
 else:
     filename = args.filename
 
-# Create name tag
-algo = "UNB"
-algo = algo + "0"
-
 outname = filename.replace(
-    ".matrix", "_%s_%02d_structure.txt" % (algo, args.seed))
+    ".matrix", "_PO_%02d_structure.txt" % (algo, args.seed))
+if os.path.exists(outname):
+    import sys
+    sys.exit(0)
 
 try:
     os.makedirs(os.path.dirname(filename))
