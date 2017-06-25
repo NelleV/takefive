@@ -35,6 +35,7 @@ Plan détaillé du papier:
     - Are the results stable?
     - How does it compares to performing a simple PCA on the gene expression
       and plotting the results?
+    - Can we use it on the contact counts directly? How do the results differ?
 - Conclusion
 
 Information for Authors
