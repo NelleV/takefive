@@ -1,8 +1,41 @@
 
 Plan détaillé du papier:
 
-TODO
+- Lemieux et al!! 
+  - Can I use any of their analysis? 
+  - How about the data?
+- Our review on the plasmodium's epigenetic
 
+
+- Analysing contact count data
+  - Normalization
+  - Quality assessment
+  - Enrichment of counts
+  - Anything else?
+     - Did we do a compartment analysis?
+  - Can we extend it?
+    - Fit-Hic ?
+- 3D structure inference
+  - How did we do it? MDS with constraints.
+  - Extensions:
+    - MDS
+    - *PO
+    (- NB)
+  - Are the results stable? Can we say anything from analysing the population
+    of structures?
+- Volume exclusion models
+  - How did we do this experiment?
+  - Does it extend?
+     - *Can we add constraints on VRSSM genes?
+- Integrative analysis of 3D architecture and genome expression.
+  - How did we do it?
+  - Can we extend it to more complex settings?
+    - *Population of structures?
+    - *How about different data sets?
+    - Are the results stable?
+    - How does it compares to performing a simple PCA on the gene expression
+      and plotting the results?
+- Conclusion
 
 Information for Authors
 
