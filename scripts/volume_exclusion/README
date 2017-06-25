@@ -1,0 +1,5 @@
+To install IMP:
+
+conda create -n IMP python=2.7
+conda config --add channels salilab
+conda install imp
