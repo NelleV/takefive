@@ -1,7 +1,7 @@
 import numpy as np
 import os
 import argparse
-from sklearn.decomposition import RandomizedPCA as PCA
+from sklearn.decomposition import PCA
 import matplotlib.pyplot as plt
 
 parser = argparse.ArgumentParser()
@@ -47,7 +47,7 @@ colors = ['#FFB773', '#FF7C00', "r",  # '#A65100',
 markers = [".", ".", ".", "D", "D", "D"]
 stages = ["Rin", "Sch", "Trop"]
 
-pca = PCA(n_components=3, copy=False, random_state=1)
+pca = PCA(n_components=3, copy=False, random_state=1, svd_solver="randomized")
 X = pca.fit_transform(X)
 fig, (ax1, ax2) = plt.subplots(
     ncols=2,

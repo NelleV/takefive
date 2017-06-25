@@ -15,8 +15,7 @@ accepted for publication XXX}
 \begin{document}
 
 % Title of paper
-\title{Exploration of empirical Bayes hierarchical modeling for the
-analysis of genome-wide association study data}
+\title{My very cool title}
 
 % List of authors, with corresponding author marked by asterisk
 \author{Nelle Varoquaux$^\ast$,\\[4pt]
@@ -64,13 +63,14 @@ corrected. \fixme{blha}
 
 
 \subsection{Analysing contact count data}
-- compartment analysis
-- extracting some relationships between counts genomic distances etc
-- Extracting significant interactions using fit-HiC
 
-Figure:
-  - log-linear relationships between counts and distances.
-  - significant interactions using fit-HiC ?
+- Normalization
+- Quality assessment
+- Enrichment of counts
+- Anything else?
+    - Did we do a compartment analysis?
+- Can we extend it?
+  - Fit-Hic ?
 
 \subsection{3D structure inference}
 
@@ -88,12 +88,12 @@ problem can either be unconstrained or constrained to reflect some prior
 knowledge on the structure (size and shape of the nucleas, distances between
 loci, etc).
 
- We added constraints to our model based on prior knowledge,
-such as the size of the nucleus, or how far apart two adjacent beads should
-lie, though we showed these constraints where well satisfied even when
-performing an unconstrained optimized. In this section, I will review the
-inference method we used in \citet{ay:three-dimensional} as well as two newer
-methods, based on well-grounded statistical method.
+We added constraints to our model based on prior knowledge, such as the size
+of the nucleus, or how far apart two adjacent beads should lie, though we
+showed these constraints where well satisfied even when performing an
+unconstrained optimized. In this section, I will review the inference method
+we used in \citet{ay:three-dimensional} as well as two newer methods, based on
+well-grounded statistical method.
 
 \subsubsection{Multidimensional scaling}
 
