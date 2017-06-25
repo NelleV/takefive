@@ -55,12 +55,12 @@ Berkeley Data Science Fellow}
 \label{sec2}
 
 Let us first introduce some notations. Hi-C data can be summarized as an $n
-\times n$ contact count matrix, where each row and column corresponds to a
-genomic window or loci, and each entry $c_{ij}$ refers to the number of time
-$i$ and $j$ have been seen interacting with one another.
+\times n$ symmetric contact count matrix, where each row and column corresponds to a
+genomic window (or loci), and each entry $c_{ij}$ refers to the number of time
+$i$ and $j$ have been seen interacting with one another. The matrix is hollow
 
 Hi-C data suffers from technical and biological biases that need to be
-corrected. We use ICE
+corrected. \fixme{blha} 
 
 
 \subsection{Analysing contact count data}
@@ -74,16 +74,21 @@ Figure:
 
 \subsection{3D structure inference}
 
-A crucial step of our analysis of the \em{P. falciparum} genome relied on
+A crucial step of our analysis of the \textit{P. falciparum} genome relied on
 visual introspection of a consensus 3D model of the genome. Being able to
 quickly visualize how chromosome folded, where families of genes lied in the
 3D space or whether regions where enriched helped us integrate with other
 sources of data.
 
 Briefly, we cast the problem of finding a consensus 3D structure $X \in R^{n
-\times n}$ as an optimization problem, where we attempted to place each beads
-in 3D so that they match as closely sa possible a predefined
-``wish-distance``. We added constraints to our model based on prior knowledge,
+\times n}$ as an optimization problem, either as minimizing a cost function,
+(often measuring the error between euclidean distance of $\mathbf{X}$ and a
+series of ``wish distances'') or maximizing a likelihood. The optimization
+problem can either be unconstrained or constrained to reflect some prior
+knowledge on the structure (size and shape of the nucleas, distances between
+loci, etc).
+
+ We added constraints to our model based on prior knowledge,
 such as the size of the nucleus, or how far apart two adjacent beads should
 lie, though we showed these constraints where well satisfied even when
 performing an unconstrained optimized. In this section, I will review the
@@ -92,8 +97,17 @@ methods, based on well-grounded statistical method.
 
 \subsubsection{Multidimensional scaling}
 
-\begin{equation}
+\begin{equation}\label{eq:mds1} 
+\renewcommand{\arraystretch}{2} 
+\begin{array}{ccll} 
+\underset{\mathbf{X}}{\text{minimize}} & & 
+\underset{(i,j) \in \mathcal{D}}{\sum} w_{ij} \big(d_{ij}(\mathbf{X}) - \delta_{ij}\big)^2
+\,,&\\ 
+\end{array} 
 \end{equation}
+
+where $w_{ij}$ corresponds to weight.
+
 
 \subsubsection{Modeling contact counts as a Poisson distribution}
 

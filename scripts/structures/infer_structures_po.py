@@ -99,6 +99,7 @@ X = poisson_structure.estimate_X(
     counts, alpha=-3., beta=1., bias=bias,
     verbose=1,
     maxiter=max_iter,
+    use_zero_entries=True,
     ini=X.flatten())
 
 counts = np.array(counts.todense())

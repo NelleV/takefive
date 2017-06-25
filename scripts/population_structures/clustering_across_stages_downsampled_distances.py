@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--algorithm", "-a", default="MDS")
+parser.add_argument("--chromosome", "-c", default=None, type=int)
 args = parser.parse_args()
 
 datasets = ["rings", "schizonts", "trophozoites"]
@@ -14,21 +15,27 @@ algorithm = args.algorithm
 labels = None
 X = None
 for i, dataset in enumerate(datasets):
-    x = np.load(
-        "results/ay2013/%s_10000_raw_%s_distances_downsampled.npy" % (
-            dataset, algorithm))
+    if args.chromosome is None:
+        filename = (
+            "results/ay2013/%s_10000_raw_%s_distances_downsampled.npy" % (
+                dataset, algorithm))
+    else:
+        filename = (
+            "results/ay2013/%s_10000_raw_%s_distances_chr%02d.npy" % (
+                dataset, algorithm, args.chromosome))
+    x = np.load(filename)
     x = x[:100]
     if labels is not None:
         X[i, :len(x)] = x
         labels = np.concatenate([labels, i * np.ones(len(x))])
     else:
         labels = i * np.ones(len(x))
-        X = np.nan * np.zeros((len(datasets), x.shape[0], x.shape[1]))
+        X = np.nan * np.zeros((len(datasets), 1000, x.shape[1]))
         X[i, :len(x)] = x
 
 X = X.reshape(-1, x.shape[1])
 # Remove missing labels
-X = X[np.invert(np.isnan(X[:, 0]))]
+X = X[np.invert(np.all(np.isnan(X), axis=1))]
 # Remove any bead with missing value
 X = X[:, np.invert(np.isnan(X.sum(axis=0)))]
 
@@ -54,18 +61,18 @@ for i in range(len(datasets)):
         markerfacecolor=colors[i],
         markeredgecolor="white", linewidth=0, label=stages[i],
         markeredgewidth=0,
-        markersize=5,
+        markersize=10,
         zorder=10,
-        alpha=0.5)
+        alpha=0.9)
     ax2.plot(
         X[labels == i, 2], X[labels == i, 1],
         marker=".",
         markerfacecolor=colors[i], markeredgecolor="white",
         linewidth=0, label=stages[i],
         markeredgewidth=0,
-        markersize=5,
+        markersize=10,
         zorder=10,
-        alpha=0.5)
+        alpha=0.9)
 
 ax1.spines['right'].set_color('none')
 ax1.spines['top'].set_color('none')
@@ -125,4 +132,10 @@ try:
     os.makedirs("images")
 except OSError:
     pass
-fig.savefig("images/pca_downsampled_distances_%s.png" % algorithm)
+if args.chromosome is None:
+    outfile = "images/pca_downsampled_distances_%s.png" % algorithm
+else:
+    outfile = "images/pca_downsampled_distances_%s_chr%02d.png" % (
+        algorithm, args.chromosome)
+
+fig.savefig(outfile)

@@ -9,15 +9,18 @@ from iced.io import load_lengths
 
 parser = argparse.ArgumentParser()
 parser.add_argument("directory")
+parser.add_argument("--lengths")
 args = parser.parse_args()
 
-filenames = glob(os.path.join(args.directory, "*NB0cst*_structure.txt"))
+if args.lengths is not None:
+    lengths = load_lengths(args.lengths)
+else:
+    lengths = load_lengths(os.path.join(
+        args.directory.replace("results", "data"),
+        "raw.bed"))
+
+filenames = glob(args.directory + "*_structure.txt")
 filenames.sort()
-
-lengths = load_lengths(os.path.join(
-    args.directory.replace("results", "data"),
-    "raw.bed"))
-
 distances = [[] for _ in lengths]
 
 for filename in filenames:
@@ -36,5 +39,10 @@ for filename in filenames:
 
 for l, distances_chr in enumerate(distances):
     distances_chr = np.concatenate(distances_chr)
-    np.save(os.path.join(args.directory, "distances_chr%02d.npy" % l),
+    outfile = (
+        args.directory.replace(
+            "structures", "results") + "_distances_chr%02d.npy" % (l+1))
+    print("Saving in %s" % outfile)
+
+    np.save(outfile,
             distances_chr)
