@@ -37,7 +37,7 @@ else:
 
 basedir = os.path.dirname(os.path.realpath(__file__))
 outname = os.path.join(basedir, "results", "without_VRSM",
-                       '%s_plasmodium_%004d.pdb' % (state, args.seed))
+                       '%s_plasmodium_%004d.txt' % (state, args.seed))
 print('output pdb:', outname)
 
 if os.path.exists(outname):
@@ -48,49 +48,49 @@ try:
 except OSError:
     pass
 
-chr_seq = {"chr1": 640851, "chr2": 947102, "chr3": 1067971, "chr4": 1200490,
-           "chr5": 1343557, "chr6": 1418242, "chr7": 1445207, "chr8": 1472805,
-           "chr9": 1541735, "chr10": 1687656, "chr11": 2038340,
-           "chr12": 2271494,
-           "chr13": 2925236, "chr14": 3291936}
+chr_seq = {"chr01": 640851, "chr02": 947102, "chr03": 1067971, "chr04": 1200490,
+           "chr05": 1343557, "chr06": 1418242, "chr07": 1445207, "chr08": 1472805,
+           "chr09": 1541735, "chr010": 1687656, "chr011": 2038340,
+           "chr012": 2271494,
+           "chr013": 2925236, "chr014": 3291936}
 
 # Centromers middle position
-chr_cen = {"chr1": 459191, "chr2": 448856, "chr3": 599144, "chr4": 643179,
-           "chr5": 456668, "chr6": 479886, "chr7": 810620, "chr8": 300205,
-           "chr9": 1243266, "chr10": 936752, "chr11": 833107,
-           "chr12": 1283731,
-           "chr13": 1169395, "chr14": 1073139}
+chr_cen = {"chr01": 459191, "chr02": 448856, "chr03": 599144, "chr04": 643179,
+           "chr05": 456668, "chr06": 479886, "chr07": 810620, "chr08": 300205,
+           "chr09": 1243266, "chr010": 936752, "chr011": 833107,
+           "chr012": 1283731,
+           "chr013": 1169395, "chr014": 1073139}
 
 # Var genes mean position
 var_genes = {
-    "chr1": [62704, 555068],
-    "chr2": [46388, 892057],
-    "chr3": [52823, 1020563],
-    "chr4": [61257.5, 131090, 159800, 580028,
+    "chr01": [62704, 555068],
+    "chr02": [46388, 892057],
+    "chr03": [52823, 1020563],
+    "chr04": [61257.5, 131090, 159800, 580028,
              961239, 1140018],
-    "chr5": [31166, 1332682],
-    "chr6": [26775.5,
+    "chr05": [31166, 1332682],
+    "chr06": [26775.5,
              732761.5, 1348167.5],
-    "chr7": [48681, 561236,  1404322.],
-    "chr8": [46573, 448866,  1377043.],
-    "chr9": [49477, 1488883.5],
-    "chr10": [43735, 1620763.],
-    "chr11": [55289, 2021296.],
-    "chr12": [36889,
+    "chr07": [48681, 561236,  1404322.],
+    "chr08": [46573, 448866,  1377043.],
+    "chr09": [49477, 1488883.5],
+    "chr010": [43735, 1620763.],
+    "chr011": [55289, 2021296.],
+    "chr012": [36889,
               774639, 1712078.5, 2218861],
-    "chr13": [44090, 106156.5,
+    "chr013": [44090, 106156.5,
               2873442],
-    "chr14": [17818, 3240144]
+    "chr014": [17818, 3240144]
     }
 
-chr_pdb = {"chr1": 'c01 A', "chr2": 'c02 B', "chr3": 'c03 C', "chr4": 'c04 D',
-           "chr5": 'c05 E', "chr6": 'c06 F', "chr7": 'c07 G', "chr8": 'c08 H',
-           "chr9": 'c09 I', "chr10": 'c10 J', "chr11": 'c11 K',
-           "chr12": 'c12 L',
-           "chr13": 'c13 M', "chr14": 'c14 N'}
+chr_pdb = {"chr01": 'c01 A', "chr02": 'c02 B', "chr03": 'c03 C', "chr04": 'c04 D',
+           "chr05": 'c05 E', "chr06": 'c06 F', "chr07": 'c07 G', "chr08": 'c08 H',
+           "chr09": 'c09 I', "chr010": 'c10 J', "chr011": 'c11 K',
+           "chr012": 'c12 L',
+           "chr013": 'c13 M', "chr014": 'c14 N'}
 
-chain_list = ['chr1', 'chr2', 'chr3', 'chr4', 'chr5', 'chr6', 'chr7', 'chr8',
-              'chr9', 'chr10', 'chr11', 'chr12', 'chr13', 'chr14']
+chain_list = ["chr01", "chr02", "chr03", "chr04", "chr05", "chr06", "chr07", "chr08",
+              "chr09", "chr010", "chr011", "chr012", "chr013", "chr014"]
 
 
 t1 = time.time()
@@ -348,7 +348,7 @@ score = cgstep(m, constraints, 500)
 X = pdboutput(outname)
 X = np.array(X)
 np.savetxt(outname, X)
-np.savetxt(outname + ".score", score)
+np.savetxt(outname + ".score", np.array([score]))
 
 # -------------------------
 
