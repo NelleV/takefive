@@ -10,25 +10,34 @@ import IMP.algebra
 import numpy as np
 import time
 import argparse
-
-state = "RINGS"
+from future import print_function
 
 parser = argparse.ArgumentParser(description='Run volume exclusion model')
 parser.add_argument('seed', metavar='N', type=int,
                     help='seed')
+parser.add_argument("--state", default="rings")
 args = parser.parse_args()
 
 # Set the seed and the random state
+state = args.state.lower()
 random_state = np.random.RandomState(seed=args.seed)
 
 # Nuclear radius - this should change depending on the state of the plasmodium
 # Let's work with rings right now
-nuclear_rad = 350
+if state == "rings" or state == "r":
+    nuclear_rad = 350
+elif state in ["schizont", "schizonts", "s"]:
+    nuclear_rad = 450
+elif state in ["trophozoites", "trophozoite", "t", "troph"]:
+    nuclear_rad = 850
+else:
+    raise ValueError("Unknown state %s" % state)
 
 basedir = os.path.dirname(os.path.realpath(__file__))
-outname = os.path.join(basedir, "cluster", str(args.seed),
-                       '%s_plasmodium_without_VRSM' % state)
-print 'output pdb:', outname
+outname = os.path.join(basedir, "results",
+                       '%s_plasmodium_without_VRSM_%004d.pdb' % (state, args.seed))
+print('output pdb:', outname)
+
 if os.path.exists(outname):
     sys.exit(0)
 
@@ -136,59 +145,22 @@ def find_bead_in_chr(bid):
     return i, order, genpos
 
 
-def pdboutput(name):
-    pdb = [[] for i in range(nbead)]
-    # -----------------------------
-    cen_pos = []
-    for k in chr_seq.keys():
-        j = bead_id(k, chr_cen[k])
-        cen_pos.append(j)
-    # ------------------------------------
+def pdboutput(name=None):
+    X = []
     for i in range(nbead):
         p0 = IMP.core.XYZR(chain.get_particle(i))
-        chr = find_chromosome(i)
-        # pdb[i].append('ATOM')
-        if i in cen_pos:
-            pdb[i].append(' CEN')  # 1
-        elif i == bead_start[chr]:
-            pdb[i].append(' L  ')
-        elif i == (bead_start[chr] + chr_bead[chr] - 1):
-            pdb[i].append(' R  ')
-        else:
-            pdb[i].append(' O  ')
-        # pdb[i].append('L')
         chr_num = filter(lambda k: bead_start[k] <= i, chr_seq.keys())[-1]
-        pdb[i].append(chr_pdb[chr_num])  # 2
-        pdb[i].append(i - bead_start[chr_num] + 1)  # 3
-        pdb[i].append(p0.get_x())  # 4
-        pdb[i].append(p0.get_y())  # 5
-        pdb[i].append(p0.get_z())  # 6
-        # pdb[i].append(15)
-        pdb[i].append(chr_num)  # 7
-    # sort the file by chromosome order
-    sorted_pdb = []
-    for i in chain_list:
-        for j in range(len(pdb)):
-            if pdb[j][6] == i:
-                sorted_pdb.append(pdb[j])
-    # insert sorted number
-    for i in range(len(sorted_pdb)):
-        sorted_pdb[i].insert(0, i + 1)
-
-    name = str(name) + '.pdb'
-    # ------------------------------------------------
-    out = open(name, 'w')
-    for l in sorted_pdb:
-        out.write("ATOM %6i %4s %5s %3i     %7.1f %7.1f %7.1f %s\n"
-                  % (l[0], l[1], l[2], l[3], l[4], l[5], l[6], l[7]))
-    out.close()
+        X.append([int(chr_num[3:]), p0.get_x(), p0.get_y(), p0.get_z()])
+    return X
 
 
-def mdstep(t, step):
-    o = IMP.atom.MolecularDynamics()
-    o.set_model(m)
+def mdstep(model, constraints, t, step):
+    sf = IMP.core.RestraintsScoringFunction(constraints)
+    o = IMP.atom.MolecularDynamics(model)
     # replace 300 K with 500 K
-    md = IMP.atom.VelocityScalingOptimizerState(xyzr, t, 10)
+    # md = IMP.atom.VelocityScalingOptimizerState(xyzr, t, 10)
+    md = IMP.atom.VelocityScalingOptimizerState(model, xyzr, t)
+    o.set_scoring_function(sf)
     o.add_optimizer_state(md)
     # print 'optimizing with temperature',t,'and',step,'steps'
     s = o.optimize(step)
@@ -197,11 +169,11 @@ def mdstep(t, step):
     return s
 
 
-def cgstep(step):
-    o = IMP.core.ConjugateGradients()
-    o.set_model(m)
+def cgstep(model, constraints, step=1000):
+    o = IMP.core.ConjugateGradients(model)
+    sf = IMP.core.RestraintsScoringFunction(constraints)
+    o.set_scoring_function(sf)
     f = o.optimize(step)
-    # print 'CG',step,'steps done @',datetime.datetime.now()
     return f
 # FUNCTIONS --------------------------------------------------------- start
 
@@ -232,6 +204,7 @@ for i in range(nbead):
     p = IMP.core.XYZR(p0)
     coor = IMP.algebra.get_random_vector_in(box)
     p.set_coordinates(coor)
+    p.set_coordinates_are_optimized(True)
     # ch,b,gpos = find_bead_in_chr(i)
     # print ch,b,pdbOrder(ch,gpos)+1,i
 
@@ -244,21 +217,28 @@ bonds = IMP.container.ListSingletonContainer(m)
 for id in chr_seq.keys():
     istart = bead_start[id]
     iend = istart + chr_bead[id]
-    IMP.atom.Bonded.setup_particle(chain.get_particle(istart))
+    bp = IMP.atom.Bonded.setup_particle(chain.get_particle(istart))
     for i in range(istart + 1, iend):
-        bp = IMP.atom.Bonded.decorate_particle(chain.get_particle(i - 1))
         bpr = IMP.atom.Bonded.setup_particle(chain.get_particle(i))
         b = IMP.atom.create_custom_bond(bp, bpr, lb, 2)
-        bonds.add_particle(b.get_particle())
+        bonds.add(b.get_particle())
+        bp = bpr
 
 # Restraint for bonds
 bss = IMP.atom.BondSingletonScore(IMP.core.Harmonic(0, 1))
 br = IMP.container.SingletonsRestraint(bss, bonds)
-m.add_restraint(br)  # 0
+# m.add_restraint(br)  # 0
 
 # Set up excluded volume
 evr = IMP.core.ExcludedVolumeRestraint(chain)
-m.add_restraint(evr)  # 1
+# m.add_restraint(evr)  # 1
+
+
+sf = IMP.core.RestraintsScoringFunction([evr, br])
+bd = IMP.atom.MolecularDynamics(m)
+md = IMP.atom.VelocityScalingOptimizerState(m, xyzr, 10)
+o = IMP.core.ConjugateGradients(m)
+o.set_scoring_function(sf)
 
 # UPTO here FERHAT ####
 # print bead_start
@@ -268,7 +248,7 @@ center = IMP.algebra.Vector3D(0, 0, 0)
 ubcell = IMP.core.HarmonicUpperBound(nuclear_rad, 1.0)
 sscell = IMP.core.DistanceToSingletonScore(ubcell, center)
 rcell = IMP.container.SingletonsRestraint(sscell, chain)
-m.add_restraint(rcell)  # 2
+# m.add_restraint(rcell)  # 2
 
 # centromers in radius 300 @-700
 centro_rad = 50.0
@@ -277,20 +257,26 @@ listcentro = IMP.container.ListSingletonContainer(m)
 for k in chr_seq.keys():
     j = bead_id(k, chr_cen[k])
     pcen = chain.get_particle(j)
-    listcentro.add_particle(pcen)
+    listcentro.add(pcen)
 
 ubcen = IMP.core.HarmonicUpperBound(centro_rad, 1.0)
 sscen = IMP.core.DistanceToSingletonScore(ubcen, centro)
 rcentro = IMP.container.SingletonsRestraint(sscen, listcentro)
-m.add_restraint(rcentro)  # 4
+#m.add_restraint(rcentro)  # 4
 
-mdstep(1000000, 500)
-mdstep(500000, 500)
-mdstep(300000, 500)
-mdstep(100000, 500)
-mdstep(5000, 500)
-score = cgstep(1000)
-print 'before telo: ', score
+constraints = [evr, br, rcell, rcentro]
+
+x_ = pdboutput(outname)
+mdstep(m, constraints, 1000000, 500)
+mdstep(m, constraints, 500000, 500)
+mdstep(m, constraints, 300000, 500)
+mdstep(m, constraints, 100000, 500)
+mdstep(m, constraints, 5000, 500)
+score = cgstep(m, constraints, 1000)
+print('before telo: ', score)
+
+#score = cgstep(1000)
+#print 'before telo: ', score
 
 # Telomeres near nuclear envelope thickness 50
 telo = IMP.container.ListSingletonContainer(m)
@@ -299,18 +285,26 @@ telo = IMP.container.ListSingletonContainer(m)
 for k in chr_seq.keys():
     j1 = bead_start[k]
     pt = chain.get_particle(j1)
-    telo.add_particle(pt)
+    telo.add(pt)
     j2 = j1 - 1 + chr_bead[k]
     pt = chain.get_particle(j2)
-    telo.add_particle(pt)
+    telo.add(pt)
 envelope = nuclear_rad - 50.0
 tlb = IMP.core.HarmonicLowerBound(envelope, 1.0)
 sst = IMP.core.DistanceToSingletonScore(tlb, center)
 rt = IMP.container.SingletonsRestraint(sst, telo)
-m.add_restraint(rt)  # 5
+#m.add_restraint(rt)  # 5
+
+constraints = [evr, br, rcell, rcentro, rt]
+mdstep(m, constraints, 500000, 5000)
+mdstep(m, constraints, 300000, 5000)
+mdstep(m, constraints, 5000, 10000)
+score = cgstep(m, constraints, 500)
+print('before angle', score)
+
 
 # outside centro sphere
-# lbcen = IMP.core.HarmonicLowerBound(centro_rad,1.0)
+# lbcen = IMP.coreHarmonicLowerBound(centro_rad,1.0)
 # sstc = IMP.core.DistanceToSingletonScore(lbcen,centro)
 # rtc = IMP.container.SingletonsRestraint(sstc,telo)
 # m.add_restraint(rtc) #6
@@ -318,18 +312,14 @@ m.add_restraint(rt)  # 5
 # Set up Nucleolis #
 # -------------------
 
-print 'High temp MD in nuc ...'
-mdstep(500000, 5000)
-mdstep(300000, 5000)
-mdstep(5000, 10000)
-score = cgstep(500)
-print 'before angle', score
+print('High temp MD in nuc ...')
+
 
 # Angle Restraint
 angle = math.pi
 angle_set = []
 noangle = [i for i in bead_start.values()]  # do not apply angle restraints
-
+ars = []
 for i in range(nbead - 1):
     ieval = i + 1
     if ieval in noangle:
@@ -341,28 +331,21 @@ for i in range(nbead - 1):
         d2 = chain.get_particle(i)
         d3 = chain.get_particle(i + 1)
         pot = IMP.core.Harmonic(angle, kbend)
-        ar = IMP.core.AngleRestraint(pot, d1, d2, d3)
-        m.add_restraint(ar)
+        ar = IMP.core.AngleRestraint(m, pot, d1, d2, d3)
+        ars.append(ar)
         angle_set.append(ar)
 
-mdstep(50000, 500)
-mdstep(25000, 500)
-mdstep(20000, 1000)
-mdstep(10000, 1000)
-mdstep(5000, 3000)
-mdstep(2000, 5000)
-mdstep(1000, 7000)
-mdstep(500, 10000)
-score = cgstep(2500)
 
-print 'angle: %.1f ' % (score)
-# -----------------------
-for i in angle_set:
-    m.remove_restraint(i)
-score = cgstep(1000)
-print 'Final score:%.1f' % (score)
+constraints = [evr, br, rcell, rcentro, rt] + ars
 
-pdboutput(outname)
+mdstep(m, constraints, 500000, 5000)
+mdstep(m, constraints, 300000, 5000)
+mdstep(m, constraints, 5000, 10000)
+score = cgstep(m, constraints, 500)
+
+X = pdboutput(outname)
+X = np.array(X)
+np.savetxt(outname, X)
 
 # -------------------------
 
@@ -374,4 +357,4 @@ pdboutput(outname)
 # output(chain,nbead,name)
 t2 = time.time()
 
-print 'time spend is ', t2 - t1, ' s'
+print('time spend is ', t2 - t1, ' s')
