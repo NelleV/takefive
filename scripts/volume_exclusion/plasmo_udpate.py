@@ -10,6 +10,7 @@ import IMP.algebra
 import numpy as np
 import time
 import argparse
+from future import print_function
 
 state = "RINGS"
 
@@ -20,7 +21,7 @@ parser.add_argument("--state", default="rings")
 args = parser.parse_args()
 
 # Set the seed and the random state
-state  = args.state.lower()
+state = args.state.lower()
 random_state = np.random.RandomState(seed=args.seed)
 
 # Nuclear radius - this should change depending on the state of the plasmodium
@@ -35,9 +36,10 @@ else:
     raise ValueError("Unknown state %s" % state)
 
 basedir = os.path.dirname(os.path.realpath(__file__))
-outname = os.path.join(basedir, "cluster", str(args.seed),
-                       '%s_plasmodium_without_VRSM' % state)
+outname = os.path.join(basedir, "results",
+                       '%s_plasmodium_without_VRSM_%004d.pdb' % (state, args.seed))
 print('output pdb:', outname)
+
 if os.path.exists(outname):
     sys.exit(0)
 
@@ -153,11 +155,12 @@ def pdboutput(name=None):
         X.append([int(chr_num[3:]), p0.get_x(), p0.get_y(), p0.get_z()])
     return X
 
+
 def mdstep(model, constraints, t, step):
     sf = IMP.core.RestraintsScoringFunction(constraints)
     o = IMP.atom.MolecularDynamics(model)
     # replace 300 K with 500 K
-    #md = IMP.atom.VelocityScalingOptimizerState(xyzr, t, 10)
+    # md = IMP.atom.VelocityScalingOptimizerState(xyzr, t, 10)
     md = IMP.atom.VelocityScalingOptimizerState(model, xyzr, t)
     o.set_scoring_function(sf)
     o.add_optimizer_state(md)
@@ -226,11 +229,11 @@ for id in chr_seq.keys():
 # Restraint for bonds
 bss = IMP.atom.BondSingletonScore(IMP.core.Harmonic(0, 1))
 br = IMP.container.SingletonsRestraint(bss, bonds)
-#m.add_restraint(br)  # 0
+# m.add_restraint(br)  # 0
 
 # Set up excluded volume
 evr = IMP.core.ExcludedVolumeRestraint(chain)
-#m.add_restraint(evr)  # 1
+# m.add_restraint(evr)  # 1
 
 
 sf = IMP.core.RestraintsScoringFunction([evr, br])
@@ -239,9 +242,6 @@ md = IMP.atom.VelocityScalingOptimizerState(m, xyzr, 10)
 o = IMP.core.ConjugateGradients(m)
 o.set_scoring_function(sf)
 
-#bd.set_scoring_function(sf)
-#bd.add_optimizer_state(md)
-#o.set_time_step(10000)
 # UPTO here FERHAT ####
 # print bead_start
 
@@ -250,7 +250,7 @@ center = IMP.algebra.Vector3D(0, 0, 0)
 ubcell = IMP.core.HarmonicUpperBound(nuclear_rad, 1.0)
 sscell = IMP.core.DistanceToSingletonScore(ubcell, center)
 rcell = IMP.container.SingletonsRestraint(sscell, chain)
-#m.add_restraint(rcell)  # 2
+# m.add_restraint(rcell)  # 2
 
 # centromers in radius 300 @-700
 centro_rad = 50.0
@@ -275,8 +275,8 @@ mdstep(m, constraints, 300000, 500)
 mdstep(m, constraints, 100000, 500)
 mdstep(m, constraints, 5000, 500)
 score = cgstep(m, constraints, 1000)
-print 'before telo: ', score
-                              
+print('before telo: ', score)
+
 #score = cgstep(1000)
 #print 'before telo: ', score
 
@@ -302,7 +302,7 @@ mdstep(m, constraints, 500000, 5000)
 mdstep(m, constraints, 300000, 5000)
 mdstep(m, constraints, 5000, 10000)
 score = cgstep(m, constraints, 500)
-print 'before angle', score
+print('before angle', score)
 
 
 # outside centro sphere
@@ -314,7 +314,7 @@ print 'before angle', score
 # Set up Nucleolis #
 # -------------------
 
-print 'High temp MD in nuc ...'
+print('High temp MD in nuc ...')
 
 
 # Angle Restraint
@@ -345,9 +345,9 @@ mdstep(m, constraints, 300000, 5000)
 mdstep(m, constraints, 5000, 10000)
 score = cgstep(m, constraints, 500)
 
-
-
 X = pdboutput(outname)
+X = np.array(X)
+np.savetxt(outname, X)
 
 # -------------------------
 
@@ -359,4 +359,4 @@ X = pdboutput(outname)
 # output(chain,nbead,name)
 t2 = time.time()
 
-print 'time spend is ', t2 - t1, ' s'
+print('time spend is ', t2 - t1, ' s')
