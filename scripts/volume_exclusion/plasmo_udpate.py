@@ -16,14 +16,23 @@ state = "RINGS"
 parser = argparse.ArgumentParser(description='Run volume exclusion model')
 parser.add_argument('seed', metavar='N', type=int,
                     help='seed')
+parser.add_argument("--state", default="rings")
 args = parser.parse_args()
 
 # Set the seed and the random state
+state  = args.state.lower()
 random_state = np.random.RandomState(seed=args.seed)
 
 # Nuclear radius - this should change depending on the state of the plasmodium
 # Let's work with rings right now
-nuclear_rad = 350
+if state == "rings" or state == "r":
+    nuclear_rad = 350
+elif state in ["schizont", "schizonts", "s"]:
+    nuclear_rad = 450
+elif state in ["trophozoites", "trophozoite", "t", "troph"]:
+    nuclear_rad = 850
+else:
+    raise ValueError("Unknown state %s" % state)
 
 basedir = os.path.dirname(os.path.realpath(__file__))
 outname = os.path.join(basedir, "cluster", str(args.seed),
