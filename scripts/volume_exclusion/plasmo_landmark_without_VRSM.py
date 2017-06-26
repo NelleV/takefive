@@ -348,6 +348,7 @@ score = cgstep(m, constraints, 500)
 X = pdboutput(outname)
 X = np.array(X)
 np.savetxt(outname, X)
+np.savetxt(outname + ".score", score)
 
 # -------------------------
 
