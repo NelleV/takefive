@@ -1,4 +1,7 @@
+from __future__ import print_function
+
 """Nuclear Landmark model for Plasmodium"""
+
 import os
 import sys
 import math
@@ -10,12 +13,11 @@ import IMP.algebra
 import numpy as np
 import time
 import argparse
-from future import print_function
 
 parser = argparse.ArgumentParser(description='Run volume exclusion model')
 parser.add_argument('seed', metavar='N', type=int,
                     help='seed')
-parser.add_argument("--state", default="rings")
+parser.add_argument("--state", "-s", default="rings")
 args = parser.parse_args()
 
 # Set the seed and the random state
