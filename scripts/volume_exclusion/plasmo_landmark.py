@@ -361,7 +361,7 @@ for k in var_genes.keys():
     for pos in var_genes[k]:
         j = bead_id(k, pos)
         pvar = chain.get_particle(j)
-        listvargenes.add_particle(pvar)
+        listvargenes.add(pvar)
 
 var_genes_center = random_state.randint(
     -nuclear_rad + 50,  nuclear_rad - 50, 3)
@@ -371,7 +371,7 @@ varcen = IMP.core.HarmonicUpperBound(var_genes_rad, 1.)
 ssvarcen = IMP.core.DistanceToSingletonScore(varcen, var_genes_center)
 rvar = IMP.container.SingletonsRestraint(ssvarcen, listvargenes)
 
-constraints += rvar
+constraints += [rvar]
 
 print('High temp MD..')
 mdstep(m, constraints, 1000000, 500)
@@ -384,15 +384,16 @@ score = cgstep(m, constraints, 1000)
 
 print('angle: %.1f ' % (score))
 # -----------------------
-for i in angle_set:
-    m.remove_restraint(i)
-score = cgstep(1000)
+
+constraints = [evr, br, rcell, rcentro, rt, rvar]
+
+score = cgstep(m, constraints, 1000)
 print('Final score:%.1f' % (score))
 
 X = pdboutput(outname)
 X = np.array(X)
 np.savetxt(outname, X)
-np.savetxt(outname + ".score", score)
+np.savetxt(outname + ".score", np.array([score]))
 
 
 # -------------------------
