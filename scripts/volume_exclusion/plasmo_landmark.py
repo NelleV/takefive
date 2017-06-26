@@ -1,4 +1,5 @@
 """Nuclear Landmark model for Plasmodium"""
+
 import os
 import sys
 import math
@@ -34,8 +35,8 @@ else:
     raise ValueError("Unknown state %s" % state)
 
 basedir = os.path.dirname(os.path.realpath(__file__))
-outname = os.path.join(basedir, "results",
-                       '%s_plasmodium_without_VRSM_%004d.pdb' % (state, args.seed))
+outname = os.path.join(basedir, "results", "with_VRMS",
+                       '%s_plasmodium_%004d.pdb' % (state, args.seed))
 print('output pdb:', outname)
 
 if os.path.exists(outname):
