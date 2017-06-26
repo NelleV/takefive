@@ -292,7 +292,7 @@ constraints = [evr, br, rcell, rcentro, rt]
 mdstep(m, constraints, 500000, 5000)
 mdstep(m, constraints, 300000, 5000)
 mdstep(m, constraints, 5000, 10000)
-score = cgstep(n, constraints, 500)
+score = cgstep(m, constraints, 500)
 print 'before angle', score
 
 

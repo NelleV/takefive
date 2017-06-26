@@ -33,7 +33,7 @@ if os.path.exists(outname):
     sys.exit(0)
 
 try:
-    os.path.makedirs(os.path.dirname(outname))
+    os.makedirs(os.path.dirname(outname))
 except OSError:
     pass
 
