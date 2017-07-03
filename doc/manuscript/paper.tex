@@ -1,11 +1,47 @@
-\documentclass[oupdraft]{bio}
-% \usepackage[colorlinks=true, urlcolor=citecolor, linkcolor=citecolor, citecolor=citecolor]{hyperref}
-\usepackage{url}
+%\documentclass[2columns]{article}
 
-% Add history information for the article if required
-\history{Received XXX;
-revised XXX;
-accepted for publication XXX}
+\documentclass[letterpaper,12pt]{article}
+\usepackage{url}
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage{wrapfig}
+\usepackage[normalem]{ulem}
+\usepackage{float}
+\usepackage{xr}
+
+\usepackage{amsmath,amssymb,amsfonts,amscd,latexsym}
+\usepackage{tabularx}
+\usepackage{multirow}
+\usepackage{multicol}
+\usepackage{eurosym}
+\usepackage{geometry}
+\usepackage{fancyhdr}
+\usepackage{enumitem}
+\usepackage{xspace}
+
+% Two column foonotes
+\usepackage{dblfnote}
+
+
+%% This is the recommended preamble for your document.
+
+%% Load De Gruyter specific settings 
+\usepackage{dgjournal}          
+
+%% The mathptmx package is recommended for Times compatible math symbols.
+%% Use mtpro2 or mathtime instead of mathptmx if you have the commercially
+%% available MathTime fonts.
+%% Other options are txfonts (free) or belleek (free) or TM-Math (commercial)
+\usepackage{mathptmx}
+
+%% Use the graphics package to include figures
+\usepackage{graphics}
+
+%% Use natbib with these recommended options
+\usepackage[authoryear,comma,longnamesfirst,sectionbib]{natbib} 
+
+
+%\externaldocument{supp}
 
 
 \newcommand{\todo}[1]{\textbf{[TODO: #1]}}
@@ -15,34 +51,14 @@ accepted for publication XXX}
 \begin{document}
 
 % Title of paper
-\title{Analysing the three-dimensional structure of \em{P. falciparum}}
+\title{Analysing the three-dimensional structure of P. falciparum}
+\author{Nelle Varoquaux}
 
-% List of authors, with corresponding author marked by asterisk
-\author{Nelle Varoquaux$^\ast$,\\[4pt]
-% Author addresses
-\textit{Department of Statistics, University of California, Berkeley \\
-Berkeley Data Science Fellow}
-\\[2pt]
-% E-mail address for correspondence
-{nelle@berkeley.edu}}
+%\maketitle
 
-% Running headers of paper:
-\markboth%
-% First field is the short list of authors
-{Nelle Varoquaux}
-% Second field is the short title of the paper
-{XXX}
-
-\maketitle
-
-% Add a footnote for the corresponding author if one has been
-% identified in the author list
-\footnotetext{To whom correspondence should be addressed.}
 
 \begin{abstract}
-{My very cool abstract.}
-{Hi-C; three-dimensional structure; and other cool stuff.
-}
+
 \end{abstract}
 
 
@@ -238,7 +254,7 @@ Funding for the project was provided by BIDS.
 {\it Conflict of Interest}: None declared.
 
 
-\bibliographystyle{biorefs}
+\bibliographystyle{DeGruyter}
 \bibliography{refs}
 
 
