@@ -15,7 +15,7 @@ accepted for publication XXX}
 \begin{document}
 
 % Title of paper
-\title{My very cool title}
+\title{Analysing the three-dimensional structure of \em{P. falciparum}}
 
 % List of authors, with corresponding author marked by asterisk
 \author{Nelle Varoquaux$^\ast$,\\[4pt]
@@ -24,7 +24,7 @@ accepted for publication XXX}
 Berkeley Data Science Fellow}
 \\[2pt]
 % E-mail address for correspondence
-{eaheron@tcd.ie}}
+{nelle@berkeley.edu}}
 
 % Running headers of paper:
 \markboth%
@@ -53,14 +53,6 @@ Berkeley Data Science Fellow}
 \section{Methods}
 \label{sec2}
 
-Let us first introduce some notations. Hi-C data can be summarized as an $n
-\times n$ symmetric contact count matrix, where each row and column corresponds to a
-genomic window (or loci), and each entry $c_{ij}$ refers to the number of time
-$i$ and $j$ have been seen interacting with one another. The matrix is hollow
-
-Hi-C data suffers from technical and biological biases that need to be
-corrected. \fixme{blha} 
-
 
 \subsection{Analysing contact count data}
 
@@ -72,42 +64,73 @@ corrected. \fixme{blha}
 - Can we extend it?
   - Fit-Hic ?
 
-\subsection{3D structure inference}
+\subsection{Inferring the 3D structures}
 
-A crucial step of our analysis of the \textit{P. falciparum} genome relied on
-visual introspection of a consensus 3D model of the genome. Being able to
-quickly visualize how chromosome folded, where families of genes lied in the
-3D space or whether regions where enriched helped us integrate with other
-sources of data.
+An important part of analysing the 3D structure of the genome of \textit{P.
+falciparum} relied on having consensus models for each stage of the life
+cycle. The method presented in \citet{ay:three-dimensional} relied on an
+approach called ``multidimensional scaling'' (MDS), widely used in the
+literature for the purpose of 3D structure inference
+\citep{duan:three-dimensional, varoquaux:statistical, bau:, tanizawa:}. Each chromosomes is
+modeled a series of beads, spaced ~10~kb apart. MDS-based method consists of
+two steps: first convert the
+contact counts $c_{ij}$ into ``wish-distances'' $\delta_{ij}$; then attempt
+to place each bead in 3D such that the euclidean distances $d_{ij}$ separating
+beads $i$ and $j$ matches as closely as possible the wish distance
+$\delta_{ij}$.
 
-Briefly, we cast the problem of finding a consensus 3D structure $X \in R^{n
-\times n}$ as an optimization problem, either as minimizing a cost function,
-(often measuring the error between euclidean distance of $\mathbf{X}$ and a
-series of ``wish distances'') or maximizing a likelihood. The optimization
-problem can either be unconstrained or constrained to reflect some prior
-knowledge on the structure (size and shape of the nucleas, distances between
-loci, etc).
+While these approaches are widely used, since better motivated and more
+flexible models to infer 3D consensus structures from contact counts have been
+proposed. 
 
-We added constraints to our model based on prior knowledge, such as the size
-of the nucleus, or how far apart two adjacent beads should lie, though we
-showed these constraints where well satisfied even when performing an
-unconstrained optimized. In this section, I will review the inference method
-we used in \citet{ay:three-dimensional} as well as two newer methods, based on
-well-grounded statistical method.
+\subsubsection{Constrained multi-dimensional scaling}
 
-\subsubsection{Multidimensional scaling}
+The method presented in \citet{ay:three-dimensional} relied on an
+approach called ``multidimensional scaling'' (MDS), widely used in the
+literature for the purpose of 3D structure inference
+\citep{duan:three-dimensional, varoquaux:statistical, bau:, tanizawa:}. Each chromosomes is
+modeled a series of beads, spaced ~10~kb apart. MDS-based method consists of
+two steps: first convert the
+contact counts $c_{ij}$ into ``wish-distances'' $\delta_{ij}$; then attempt
+to place each bead in 3D such that the euclidean distances $d_{ij}$ separating
+beads $i$ and $j$ matches as closely as possible the wish distances
+$\delta_{ij}$.
+
+\paragraph{Wish distances}
+
+A crucial step of MDS-based method rely on finding a good set of
+``wish-distances'' from Hi-C contact count data.
+
+\paragraph{Optimization}
+
+Given the resulting wish-distances, we cast the inference of the consensus
+structure $\mathbf{X}^{3 \times n}$ as the following constrained weighted MDS:
+
 
 \begin{equation}\label{eq:mds1} 
 \renewcommand{\arraystretch}{2} 
 \begin{array}{ccll} 
 \underset{\mathbf{X}}{\text{minimize}} & & 
-\underset{(i,j) \in \mathcal{D}}{\sum} w_{ij} \big(d_{ij}(\mathbf{X}) - \delta_{ij}\big)^2
-\,,&\\ 
+\underset{(i,j) \in \mathcal{D}}{\sum} \frac{1}{\delta^2_{ij}}
+\big(d_{ij}(\mathbf{X}) - \delta_{ij}\big)^2 & \\
+\text{subject to} & & d_{ij} \leq r^2_\text{max} \quad \forall i, j &\,,\\
+& & d_{i, i+1} \leq b_\text{max} \quad i = \{i:n|\text{chr}_i = \text{chr}_{i+1}\,,&\\ 
 \end{array} 
 \end{equation}
 
-where $w_{ij}$ corresponds to weight.
+The various constraints corresponds to {\em prior} knowledge on the 3D
+structure, and vary across organisms, time-points of the life cycle and
+cell-type. For {\em P. falciparum}, the constraints are as follow.
 
+\begin{itemize}
+\item All beads lie in a spherical nucleus centered on the origin and of a
+certain size.
+\item Two adjacent beads must not be too far apart. Leveraging the work of
+\citet{berger}, we assume that $b^\text{max} = 91~nm$
+\end{itemize}
+
+Note that in practice, the constraints are mostly intrinsic to the data and
+thus can be dropped.
 
 \subsubsection{Modeling contact counts as a Poisson distribution}
 
@@ -119,7 +142,9 @@ where $w_{ij}$ corresponds to weight.
 - at least 100 iterations
 - maybe compare results with chromSDE, PCA \& ShRec3D 
 - 
+
 \subsubsection{Volume exclusion models}
+
 
 \subsection{Integrative analysis of gene expression and 3D structure using KernelCCA}
 
@@ -131,8 +156,6 @@ review? Can the results be interpretable?
 
 \section{Results}
 \label{sec3}
-
-\subsection{Simulation study application}
 
 \section{Discussion}
 \label{sec4}
