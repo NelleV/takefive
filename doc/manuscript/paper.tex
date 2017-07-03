@@ -139,7 +139,7 @@ cell-type. For {\em P. falciparum}, the constraints are as follow.
 \item All beads lie in a spherical nucleus centered on the origin and of a
 certain size.
 \item Two adjacent beads must not be too far apart. Leveraging the work of
-\citet{berger}, we assume that $b^\text{max} = 91~nm$
+\citet{berger:high TOVERIFY}, we assume that $b^\text{max} = 91~nm$
 \end{itemize}
 
 Note that in practice, the constraints are fulfilled naturally by the data,
@@ -159,7 +159,36 @@ implements exactly the unconstrained model defined here).
 - 
 
 \subsubsection{Volume exclusion models}
+blha
 
+\citet{tjong:physical} showed \textit{S. cerevisiae}'s structure can be mostly
+explained by a large set of constrained yet random population of structures
+following a simple volume exclusion model. We repeated the experiment on {\em
+P. falciparum}, and showed that, despite recovering similar results on {\em S.
+cerevisiae}, the same set of constraints is not sufficient to explain {\em P.
+falciparum}'s Hi-C contact map. 
+
+Briefly, let us recall the methodology presented by \citet{tjong:physical}. We
+construct a population of three-dimensional structures by modeling chromosomes
+as random configuration of beads-on-a-string, subjected to the following constraints.
+
+\begin{itemize}
+\item \textbf{Adjacent Beads Constraints} Two adjacent beads spaced 3.2kb apart are constrained to be 30nm apatr.
+\item \textbf{Volume Exclusion Constraints} Each pairs of beads are spaced at minimum XX apart
+\item \textbf{Nucleus Constraint} All beads lie in a spherical nucleus of specific
+radius (XXX)
+\item \textbf{Centromeres Constraints} Centromeres are localized in a small sphere of
+50nm abutting the nuclear envelop.
+\item \textbf{Telomere Constraints} Telomeres are located at most 50nm from the nuclear envelop.
+\end{itemize}
+
+\citet{tjong:physical} then formulates an optimization problem that includes
+in addition to all the aforementioned constraints a penalty term on three
+adjacent beads accounting for chromatin stiffness.
+
+$$
+\frac{1}{2} FIXME
+$$
 
 \subsection{Integrative analysis of gene expression and 3D structure using KernelCCA}
 
