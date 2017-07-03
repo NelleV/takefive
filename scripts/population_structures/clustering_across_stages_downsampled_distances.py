@@ -24,7 +24,7 @@ for i, dataset in enumerate(datasets):
             "results/ay2013/%s_10000_raw_%s_distances_chr%02d.npy" % (
                 dataset, algorithm, args.chromosome))
     x = np.load(filename)
-    x = x[:100]
+    x = x[:1000]
     if labels is not None:
         X[i, :len(x)] = x
         labels = np.concatenate([labels, i * np.ones(len(x))])
