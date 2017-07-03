@@ -99,7 +99,20 @@ $\delta_{ij}$.
 \paragraph{Wish distances}
 
 A crucial step of MDS-based method rely on finding a good set of
-``wish-distances'' from Hi-C contact count data.
+``wish-distances'' from Hi-C contact count data. While several approach have
+been used in the litterature, most leverage bio-physics relationships either
+between the genomic distnaces $s$ and the expected count, or the relationship
+between the euclidean distance $d$ and the expected
+count. \citet{ay:three-dimensional} observe that {\em P. falciparum}'s DNA
+behave like a fractal globule polymer. \citet{grosberg:fractal} show fractal
+globul polymer exhibits a well-defined relationship between its genomic length
+and physical distance $d$:
+
+$$d\sim s^{1/3}$$
+
+The relationship between genomic distance $s$ and $c$ can be derived from the
+data, by fitting a linear model between the log expected count and the genomic
+distances.
 
 \paragraph{Optimization}
 
@@ -129,12 +142,11 @@ certain size.
 \citet{berger}, we assume that $b^\text{max} = 91~nm$
 \end{itemize}
 
-Note that in practice, the constraints are mostly intrinsic to the data and
-thus can be dropped.
+Note that in practice, the constraints are fulfilled naturally by the data,
+and thus can be dropped.  
 
 \subsubsection{Modeling contact counts as a Poisson distribution}
 
-\subsubsection{Modeling contact counts as a Negative Binomial distribution}
 
 
 \subsubsection{Structure stability}
@@ -147,6 +159,9 @@ thus can be dropped.
 
 
 \subsection{Integrative analysis of gene expression and 3D structure using KernelCCA}
+
+In order to integrate
+
 
 - Can we extend this to other data types? Chip-seq data available from our
 review? Can the results be interpretable?
