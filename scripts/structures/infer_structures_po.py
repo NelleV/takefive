@@ -6,6 +6,7 @@ from pastis import fastio
 from minorswing import dispersion
 from minorswing._inference import poisson_structure
 from pastis.optimization import mds
+from utils import compute_wish_distances
 from minorswing._inference import utils
 import iced
 
@@ -78,7 +79,9 @@ normed = normed.tocoo()
 # Compute starting point
 print "Initializing"
 random_state = np.random.RandomState(args.seed)
-X = mds.estimate_X(normed, random_state=random_state)
+wd = compute_wish_distances(normed)
+X = mds.estimate_X(wd, random_state=random_state,
+                   precompute_distances="precomputed")
 X[np.isnan(X)] = 0
 
 # PM2
