@@ -25,7 +25,7 @@ else:
     filename = args.filename
 
 outname = filename.replace(
-    ".matrix", "_PO_%02d_structure.txt" % (algo, args.seed))
+    ".matrix", "_PO_%02d_structure.txt" % (args.seed))
 if os.path.exists(outname):
     import sys
     sys.exit(0)

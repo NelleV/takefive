@@ -15,13 +15,11 @@ for FOLDER in ${FOLDERS[@]}; do
 #    -N 1 \
 #    --mail-type=ALL --mail-user=nelle@berkeley.edu;
 
-  sbatch --export=DATASET=${FOLDER} -v -p RM-shared --array 101-1000 --mem 1500Mb \
+  sbatch --export=DATASET=${FOLDER} -v -p RM-shared --array 11-1000 --mem 1500Mb \
     --job-name ${FOLDER}_PO \
     --time=48:00:00 cluster_scripts/slurm_po.sh \
     -N 1 \
     --mail-type=ALL --mail-user=nelle@berkeley.edu;
-
-
 done;
 
 

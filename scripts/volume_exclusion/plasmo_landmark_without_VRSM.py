@@ -98,7 +98,7 @@ sep = 3200       # 3200 bp separation
 chr_bead = {}    # number of beads for each chromosome
 nbead = 0
 bead_start = {}  # bead label starts of a chr
-for i in chr_seq.keys():
+for i in sorted(chr_seq.keys()):
     n = chr_seq[i] / sep + 1
     chr_bead[i] = n
     nbead = nbead + n
@@ -125,7 +125,7 @@ def bead_id(chr, gpos):
 
 def find_chromosome(bid):
     """ Returns a chromosome id given a bead number"""
-    for i in chr_seq.keys():
+    for i in sorted(chr_seq.keys()):
         if bid < bead_start[i] + chr_bead[i] \
            and bid >= bead_start[i]:
             chrid = i
@@ -138,7 +138,7 @@ def find_bead_in_chr(bid):
     Returns a chromosome and bead_order and mid genome position given a
     beadnum
     """
-    for i in chr_seq.keys():
+    for i in sorted(chr_seq.keys()):
         if bid < bead_start[i] + chr_bead[i] \
            and bid >= bead_start[i]:
             order = bid - bead_start[i] + 1  # order starts from 1
@@ -216,7 +216,7 @@ for i in range(nbead):
 # print 'Setting up restraints'
 # Create bonds for consecutive beads in a string
 bonds = IMP.container.ListSingletonContainer(m)
-for id in chr_seq.keys():
+for id in sorted(chr_seq.keys()):
     istart = bead_start[id]
     iend = istart + chr_bead[id]
     bp = IMP.atom.Bonded.setup_particle(chain.get_particle(istart))
@@ -256,7 +256,7 @@ rcell = IMP.container.SingletonsRestraint(sscell, chain)
 centro_rad = 50.0
 centro = IMP.algebra.Vector3D(nuclear_rad - centro_rad, 0, 0)
 listcentro = IMP.container.ListSingletonContainer(m)
-for k in chr_seq.keys():
+for k in sorted(chr_seq.keys()):
     j = bead_id(k, chr_cen[k])
     pcen = chain.get_particle(j)
     listcentro.add(pcen)
@@ -284,7 +284,7 @@ print('before telo: ', score)
 telo = IMP.container.ListSingletonContainer(m)
 # galBead =  bead_id(galpos[0],galpos[1])
 # telo.add_particle(chain.get_particle(galBead))
-for k in chr_seq.keys():
+for k in sorted(chr_seq.keys()):
     j1 = bead_start[k]
     pt = chain.get_particle(j1)
     telo.add(pt)
@@ -344,6 +344,12 @@ mdstep(m, constraints, 500000, 5000)
 mdstep(m, constraints, 300000, 5000)
 mdstep(m, constraints, 5000, 10000)
 score = cgstep(m, constraints, 500)
+
+constraints = [evr, br, rcell, rcentro, rt]
+
+score = cgstep(m, constraints, 1000)
+print('Final score:%.1f' % (score))
+
 
 X = pdboutput(outname)
 X = np.array(X)
