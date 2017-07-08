@@ -12,7 +12,17 @@ args = parser.parse_args()
 
 filename = args.filename
 
-lengths = io.load_lengths("data/ay2013/rings_10000_raw.bed")
+
+lengths = np.loadtxt("files/lengths").astype(float)
+if "10kb" in filename:
+    resolution = 10000
+else:
+    resolution = 25000
+
+lengths /= resolution
+lengths = np.ceil(lengths).astype(int)
+
+
 counts = np.zeros([lengths.sum(), lengths.sum()])
 
 begin_chr = np.concatenate([[0], lengths.cumsum()])
@@ -25,8 +35,8 @@ with gzip.open(filename, "rb") as f:
         chrom1 = int(chrom1.strip("chr"))
         chrom2 = int(chrom2.strip("chr"))
 
-        loc1 /= 10000
-        loc2 /= 10000
+        loc1 /= resolution
+        loc2 /= resolution
 
         loc1 += begin_chr[chrom1 - 1]
         loc2 += begin_chr[chrom2 - 1]
@@ -42,3 +52,4 @@ if args.outname is not None:
         pass
 
     io.write_counts(args.outname, sparse.coo_matrix(np.triu(counts)))
+    io.write_lengths(args.outname.replace("_raw.matrix", ".bed"), lengths)

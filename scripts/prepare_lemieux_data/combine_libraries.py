@@ -8,20 +8,23 @@ filenames = glob("data/lemieux/*/*_raw.matrix")
 filenames = [filename for filename in filenames
              if not filename.endswith("_combined_raw.matrix")]
 filenames.sort()
-basenames = set(
-    [filename.strip("_raw.matrix").rstrip("MobI").rstrip("HindIII")
-     for filename in filenames])
-lengths = io.load_lengths("data/ay2013/rings_10000_raw.bed")
-
+basenames = list(set(
+    [filename.split("-")[0]
+     for filename in filenames]))
+basenames.sort()
 
 for basename in basenames:
     print("Combining", basename)
     counts = None
     for filename in filenames:
         if filename.startswith(basename):
+
+            lengths = io.load_lengths(filename.replace("_raw.matrix", ".bed"))
             if counts is None:
                 counts = io.load_counts(filename, lengths=lengths)
             else:
                 counts += io.load_counts(filename, lengths=lengths)
     io.write_counts(
         basename + "_combined_raw.matrix", counts)
+    io.write_lengths(
+        basename + "_combined_raw.bed", lengths)
