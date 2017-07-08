@@ -32,7 +32,10 @@ else:
     counts = None
 
 centromeres = np.loadtxt("files/pf.cent")
-resolution = 10000
+if "25kb" in args.filename:
+    resolution = 25000
+else:
+    resolution = 10000
 
 X = np.loadtxt(args.filename)
 if len(X.shape) == 1:

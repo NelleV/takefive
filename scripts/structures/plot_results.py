@@ -13,7 +13,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("filename")
 parser.add_argument("--lengths", default=None, type=str)
 parser.add_argument("--counts", default=None, type=str)
-parser.add_argument("--resolution", default=10000)
+parser.add_argument("--resolution", default=10000, type=int)
 parser.add_argument("--outfile", "-o", default=None, type=str)
 parser.add_argument("--rotate", "-r", default=False, action="store_true")
 parser.add_argument("--nucleus-size", "-n", dest="nucleus_size", default=1000,
@@ -114,6 +114,7 @@ for j, (x, y, z) in enumerate(smoothed_X):
         else:
             pos = (b + e) / 2
             pos /= float(length) * resolution / m
+            pos = pos.astype(int)
             xp = 2 * linewidth * np.sin(phi) * np.cos(theta) + x[pos]
             yp = 2 * linewidth * np.sin(phi) * np.sin(theta) + y[pos]
             zp = 2 * linewidth * np.cos(phi) + z[pos]

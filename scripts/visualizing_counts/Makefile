@@ -1,5 +1,5 @@
 COUNTS = $(wildcard data/ay2013/*_raw.matrix) \
-	 $(wildcard data/lemieux/*/*combined_raw.matrix) \
+	 $(wildcard data/lemieux2013/*/*combined_raw.matrix) \
 
 IMG = $(patsubst data/%.matrix, images/%.png, $(COUNTS))
 
