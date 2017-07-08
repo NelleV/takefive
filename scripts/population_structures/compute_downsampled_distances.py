@@ -26,7 +26,6 @@ distances = []
 
 filenames = glob(args.directory + "*_structure.txt")
 filenames.sort()
-filenames = filenames[:100]
 
 distances = []
 

@@ -95,10 +95,6 @@ to place each bead in 3D such that the euclidean distances $d_{ij}$ separating
 beads $i$ and $j$ matches as closely as possible the wish distance
 $\delta_{ij}$.
 
-While these approaches are widely used, since better motivated and more
-flexible models to infer 3D consensus structures from contact counts have been
-proposed. 
-
 \subsubsection{Constrained multi-dimensional scaling}
 
 The method presented in \citet{ay:three-dimensional} relied on an
@@ -111,24 +107,6 @@ contact counts $c_{ij}$ into ``wish-distances'' $\delta_{ij}$; then attempt
 to place each bead in 3D such that the euclidean distances $d_{ij}$ separating
 beads $i$ and $j$ matches as closely as possible the wish distances
 $\delta_{ij}$.
-
-\paragraph{Wish distances}
-
-A crucial step of MDS-based method rely on finding a good set of
-``wish-distances'' from Hi-C contact count data. While several approach have
-been used in the litterature, most leverage bio-physics relationships either
-between the genomic distnaces $s$ and the expected count, or the relationship
-between the euclidean distance $d$ and the expected
-count. \citet{ay:three-dimensional} observe that {\em P. falciparum}'s DNA
-behave like a fractal globule polymer. \citet{grosberg:fractal} show fractal
-globul polymer exhibits a well-defined relationship between its genomic length
-and physical distance $d$:
-
-$$d\sim s^{1/3}$$
-
-The relationship between genomic distance $s$ and $c$ can be derived from the
-data, by fitting a linear model between the log expected count and the genomic
-distances.
 
 \paragraph{Optimization}
 
@@ -158,24 +136,103 @@ certain size.
 \citet{berger:high TOVERIFY}, we assume that $b^\text{max} = 91~nm$
 \end{itemize}
 
-Note that in practice, the constraints are fulfilled naturally by the data,
-and thus can be dropped. In addition of drastically reducing the computation
-time, this allows to use generic publicly available software such as chromSDE
-(which implements a variant of the model defined here), or Pastis-MDS (which
-implements exactly the unconstrained model defined here).
+\paragraph{Wish distances}
 
-\subsubsection{Modeling contact counts as a Poisson distribution}
+A crucial step of MDS-based method rely on finding a good set of
+``wish-distances'' from Hi-C contact count data. While several approach have
+been used in the litterature, most leverage bio-physics relationships either
+between the genomic distnaces $s$ and the expected count, or the relationship
+between the euclidean distance $d$ and the expected
+count. \citet{ay:three-dimensional} observe that {\em P. falciparum}'s DNA
+behave like a fractal globule polymer. \citet{grosberg:fractal} show fractal
+globul polymer exhibits a well-defined relationship between its genomic length
+and physical distance $d$:
 
+$$d\sim s^{1/3}$$
 
+The relationship between genomic distance $s$ and $c$ can be derived from the
+data, by fitting a linear model between the log expected count and the genomic
+distances and extracting the slope coefficient $\alpha$. We thus obtain, up to
+a scaling factor $\beta$ a function to map contact counts to wish distances:
+
+\begin{equation}
+\label{eq:count-to-distance}
+\delta_{ij} = \beta c^{\alpha/3}
+\end{equation}
+
+The scaling factor depends both on the sequencing depth of the libraries, but
+also on the nucleus size of the organims. \citet{ay:three-dimensional} infers
+3D models for a range of parameters and keeps the models that are the most
+plausible, under the assumption that beads should be as uniformely distributed
+in the nucleus as possible. 0-contact counts can either be ignored, or mapped
+to the largest distance possible. Note that for high coverage data set, the
+amount of non-interacting beads is sufficiently small that including those or
+not in the optimization will make very little difference.
+
+\subsubsection{Reproducing the results using a simpler model}
+
+Two simplifications can be brought to the method proposed by
+\citet{ay:three-dimensional}. 
+
+First, the ``count-to-distance'' relationship is based on two steps: (1) find
+the relationship between genomic distances and counts; (2) from the
+coefficient, deduce what type of polymer the DNA of this particular organism
+is closest two (fractal globule or equilibrium); (3) use the relationship
+between genomic distance $s$ and euclidean distance $d$ for that particular
+type of polymer. Yet, it is likely that the probability of contact count
+between two elements depends mostly on the average distance separating the two
+beads. As noted in \citet{varoquaux:statistical}, while the relationship
+between both genomic distance $s$ and expected contact count $c$ and the
+relationship between genomic distance $s$ and euclidean distance $c$,
+combining both yields the same count-to-distance function for both polymer
+type:
+
+\begin{equation}
+\delta_{ij} = \beta c^{-1/3}
+\end{equation}
+
+While the difference may seem subtile, fitting the linear model to find
+$\alpha$ is not as straightforward as it seems, as the range of genomic
+distance used can have a large impact on the final coefficient.
+
+The second simplification is to perform an unconstraint optimization. Indeed,
+in practice, the constraints are fulfilled naturally by the data and thus can
+be dropped from the optimization. In addition of drastically reducing the
+computation time, this allows to use generic publicly available software such
+as chromSDE (which implements a variant of the model defined here), or
+Pastis-MDS (which implements exactly the unconstrained model defined here).
 
 \subsubsection{Structure stability}
-- Structure stability
-- at least 100 iterations
-- maybe compare results with chromSDE, PCA \& ShRec3D 
-- 
+
+Both the constrained and unconstained problem stated above are not convex. The
+reader may well ask how sensitive the result is to initialize. In short, it is
+not. To study the stability of the results with respect to the initialization,
+I perform for each stage presented here 1000 optimization, starting from
+different initialization. 
+
+The first question that arise is simply: are structures from the same time
+points but from a different start ponit more alike than structures from
+different time points? To answer this question, I compute for each structure
+and each time point a feature matrix, composed of a subsampled pairwise
+euclidean distances of each structure. The reason for subsampling is simply so
+that the resulting feature matrix fits in memory on a laptop. I then compute a
+stochastic PCA on this feature matrix and plot the projection in 2D space
+using the 3 first components. The results clearly show that structures from
+the same time point cluster strongly. Repeating this experiment on singly
+chromosomes yields the same result.
+
+The second question one can ask is how do the structures differ. Tackling this
+question is very challenging, but can be reformulated in a much easier way.
+Are the hallmarks of interest conserved across structures of a same stage?
+\citet{ay:three-dimensional} and \citet{lemieux:genome-wide} both identified
+{\em P. falciparum} folded in very specific ways, with VRSSM genes highly
+interacting. \citet{ay:three-dimensional} also observed strong clustering of
+the centromeres, and enrichment in interaction at the telomeres. These
+observation can lead to a rigourous approach at identifying whether families
+of loci clustered in the structures and even quantifying this in a rigourous
+manner.
 
 \subsubsection{Volume exclusion models}
-blha
 
 \citet{tjong:physical} showed \textit{S. cerevisiae}'s structure can be mostly
 explained by a large set of constrained yet random population of structures
