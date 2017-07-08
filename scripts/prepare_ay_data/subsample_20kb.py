@@ -20,7 +20,7 @@ counts = counts.T + counts
 
 new_counts, new_lengths = utils.downsample_resolution(counts, lengths)
 
-new_counts = sparse.coo_matrix(np.triu(counts))
+new_counts = sparse.coo_matrix(np.triu(new_counts))
 
 
 io.write_counts(args.outname, new_counts)
