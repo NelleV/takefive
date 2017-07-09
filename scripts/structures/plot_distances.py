@@ -34,6 +34,8 @@ else:
 centromeres = np.loadtxt("files/pf.cent")
 if "25kb" in args.filename:
     resolution = 25000
+if "20000" in args.filename:
+    resolution = 20000
 else:
     resolution = 10000
 

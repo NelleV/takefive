@@ -9,6 +9,7 @@ from pastis.optimization import mds
 from utils import compute_wish_distances
 from minorswing._inference import utils
 import iced
+from sklearn.metrics import euclidean_distances
 
 """
 Launches the inference of the 3D model on .matrix/.bed files"""
@@ -29,7 +30,7 @@ outname = filename.replace(
     ".matrix", "_PO_%02d_structure.txt" % (args.seed))
 if os.path.exists(outname):
     import sys
-    sys.exit(0)
+    #sys.exit(0)
 
 try:
     os.makedirs(os.path.dirname(filename))
@@ -91,14 +92,26 @@ outname = filename.replace(
 if os.path.exists(outname):
     print "Already computed"
     import sys
-    sys.exit()
+    #sys.exit()
 
 alpha = -3.
 max_iter = 1000000
 
-counts = counts.tocoo()
+bias = bias.reshape(-1, 1)
+counts = counts.toarray()
+m  = (counts.sum(axis=0) + counts.sum(axis=1)) == 0
+counts[m, :] = np.nan
+counts[:, m] = np.nan
+
+m, n = X.shape
+d = euclidean_distances(X)
+mask = (np.invert(np.tri(m, dtype=np.bool)) & np.invert(np.isnan(counts)))
+beta = counts[mask].sum() / ((d[mask] ** alpha) * (bias * bias.T)[mask]).sum()
+counts[np.isnan(counts)] = 0
+
+counts = sparse.coo_matrix(counts)
 X = poisson_structure.estimate_X(
-    counts, alpha=-3., beta=1., bias=bias,
+    counts, alpha=-3., beta=beta, bias=bias,
     verbose=1,
     maxiter=max_iter,
     use_zero_entries=True,
