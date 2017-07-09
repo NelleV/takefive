@@ -51,7 +51,7 @@
 \begin{document}
 
 % Title of paper
-\title{Analysing the three-dimensional structure of P. falciparum}
+\title{Analysing the three-dimensional structure of {\em P. falciparum}}
 \author{Nelle Varoquaux}
 
 %\maketitle
@@ -63,24 +63,75 @@
 
 
 \section{Introduction}
-\label{sec1}
+\label{sec:introduction}
+
+With more than 217 millions cases nearly 429 000 deaths in 2015,  malaria
+remains a major disease burden in tropical and subtropical countries and an
+impediment to economic development. In Africa, where more than 90\% of the
+cases and deaths occurs, the effect of malaria extend far beyond direct
+measures of mortality: the disease is thought to cost more than US\$21
+billion a year \citep{onwejkwe:do}.
+
+In humans, malaria is caused by a unicellular protozoan {\em Plasmodium} of
+the following species: {\em P. vivax}, {\em P. malariae}, {\em P. ovale}, {\em
+P. knowelis}, and with 99\% of the deaths associated to it, by far the most
+deadly {\em P. falciparum}. The parasite has a complex life cycle, with
+multiple stage both in the human and mosquito host. The human host is infected
+with sporozoites through the bite of a infected female  {\em Anopheles}
+mosquito. The sporozoites quickly migrate to the liver, where they start a two
+weeks multiplication process. They are then released as merozoites in the
+bloodstream, and infect red blood cells. The parasites then start their
+"erythrocytic" stage, via another round of replications in red blood cells,
+through an unusual process of cell division called schizogony. The parasite
+first undergoes multiple rounds of nuclear replication and division  into 13
+to 32 daughter cells, until the red blood cell bursts and provokes the release
+of merezoites and the infective cycle starts anew. This asexual replication
+cycle is responsible for the symptoms and the complications of the disease:
+anemia, tertian fever, \dots
+
+While efficacious vaccines still remains a hope and drug resistance to anti
+malaria continues to arise, genomic-based research on malaria seeks new
+avenues for developing novel therapies \citet{kirchner:recent}. One of the
+limiting factors of developments of new drugs is our poor understanding of the
+mechanisms underlying the parasite's complex life cycle. While the development
+of {\em P. falciparum} through the different stages of its life is thought to
+be driven by coordinating changes in gene expression, the relative paucity of
+transcription factors points to unusual gene regulatory mechanisms . Meanwhile,
+the relative abundance of proteins related to chromatin structures, mRNA decay
+and translation rates suggests alternative mechanisms of gene regulation at the
+epigenetic and post-translational levels
+\citep{cui:chromatin-mediated, duffy:role, hoeijmakers:placing,
+horrocks:control, deitsch:mechanisms}.
 
 
-\section{Methods}
-\label{sec2}
+\fixme{introduction on HiC}
 
 
-\subsection{Analysing contact count data}
+We discuss below the analysis methods used and developed for studying the 3D
+architecture of {\em P. falciparum}'s genome.
+
+\section{Profiling {\em P. falciparum}'s genome architecture during the
+asexual cycle}
+\label{sec:data}
+
+- Difficulty of the protocol on the AT-rich genome of p. falciparum.
+- Summary of the data
+
+
+
+\section{Analyzing contact count data}
 
 - Normalization
 - Quality assessment
 - Enrichment of counts
+- power-law analysis
+- 
 - Anything else?
     - Did we do a compartment analysis?
 - Can we extend it?
   - Fit-Hic ?
 
-\subsection{Inferring the 3D structures}
+\section{Inferring the 3D structures}
 
 An important part of analysing the 3D structure of the genome of \textit{P.
 falciparum} relied on having consensus models for each stage of the life
@@ -95,7 +146,7 @@ to place each bead in 3D such that the euclidean distances $d_{ij}$ separating
 beads $i$ and $j$ matches as closely as possible the wish distance
 $\delta_{ij}$.
 
-\subsubsection{Constrained multi-dimensional scaling}
+\subsection{Constrained multi-dimensional scaling}
 
 The method presented in \citet{ay:three-dimensional} relied on an
 approach called ``multidimensional scaling'' (MDS), widely used in the
@@ -169,7 +220,7 @@ to the largest distance possible. Note that for high coverage data set, the
 amount of non-interacting beads is sufficiently small that including those or
 not in the optimization will make very little difference.
 
-\subsubsection{Reproducing the results using a simpler model}
+\subsection{Reproducing the results using a simpler model}
 
 Two simplifications can be brought to the method proposed by
 \citet{ay:three-dimensional}. 
@@ -202,7 +253,7 @@ computation time, this allows to use generic publicly available software such
 as chromSDE (which implements a variant of the model defined here), or
 Pastis-MDS (which implements exactly the unconstrained model defined here).
 
-\subsubsection{Structure stability}
+\subsection{Structure stability}
 
 Both the constrained and unconstained problem stated above are not convex. The
 reader may well ask how sensitive the result is to initialize. In short, it is
@@ -232,10 +283,42 @@ observation can lead to a rigourous approach at identifying whether families
 of loci clustered in the structures and even quantifying this in a rigourous
 manner.
 
-A number of methods have been proposed to accomplish such tasks, which I will
-review in this section.
+\section{3D gene set enrichment}
 
-\subsubsection{Volume exclusion models}
+To assess whether groups of genes are colocolized in a 3D model,
+\citet{ay:three-dimensional} leveraged a statistical method developped by
+\citet{witten:XXX}, which requires labeling each pair of loci in two groups:
+"close" or "far". 
+
+The authors used varying distance
+thresholds (10\%, 20\% and 40\% of the nuclear diameter) to deem a locus pair
+“close” and labeled all remaining
+pairs in the set as “far”. 
+
+\fixme{Re-read Witten and Noble}
+
+This approach dichotomize loci pairs into two groups, and check for the
+enrichment of a label in one of the two groups. \citep{capurso:distance-based}
+presents an approach that avoids this step, and instead directly estimates the
+significance within the 3D model. Briefly, for a group $\mathcal{G}$, MPED
+computes a test statitics:
+\begin{equation*}
+M = \underset{i,j \in \mathcal{G}| c_i != c_j}{\text{median}} d_{ij}\,,
+\end{equation*}
+
+where $d_{ij}$ is the euclidean distance between bead $i$ and bead $j$. The
+null distribution is estimated empirically by resampling $10^5$ with
+preservation of the chromosome structure. If the $M$ statistics is smaller
+than the mean of the null distribution, it is compared to the lower tail of
+the distribution and indicates co-localization. If the $M$ statistics is
+larger than the mean of the null distribution, then it is compared to the
+upper tail of the distribution, and indicates dispersion.
+
+Applying MEPD to the Ring stage, \citet{capurso:distance-based} confirm that
+centromers, telomers, VRSM genes (both overall, subtelomeric and internal)
+colocalize.
+
+\section{Volume exclusion models cannot explain }
 
 \citet{tjong:physical} showed \textit{S. cerevisiae}'s structure can be mostly
 explained by a large set of constrained yet random population of structures
@@ -270,7 +353,7 @@ We use IMP to generate a population of structures.
 
 \paragraph{Adding constraints on VRSM genes}
 
-\subsection{Integrative analysis of gene expression and 3D structure using KernelCCA}
+\section{Integrative analysis of gene expression and 3D structure using KernelCCA}
 
 \citet{ay:three-dimensional}  exploited the 3D models to relate structure to
 gene expression. The authors rely on a technic called ``kernelCCA'' with
@@ -280,9 +363,6 @@ these are coherent with one another.
 - Can we extend this to other data types? Chip-seq data available from our
 review? Can the results be interpretable?
 
-
-\section{Results}
-\label{sec3}
 
 \section{Discussion}
 \label{sec4}

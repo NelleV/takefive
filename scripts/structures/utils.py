@@ -60,7 +60,7 @@ def bezier_curve(points, nTimes=100):
     return xvals, yvals, zvals
 
 
-def interpolate_chromosomes(X, lengths, kind="cubic", eps=1e-1):
+def interpolate_chromosomes(X, lengths, kind="cubic", eps=1e-1, step=0.1):
     """
     Return a smoothed interpolation of the chromosomes
 
@@ -119,7 +119,7 @@ def interpolate_chromosomes(X, lengths, kind="cubic", eps=1e-1):
         m = np.arange(len(x))[indx]
 
         if kind == "bezier":
-            m = np.arange(m.min(), len(x)-1, 0.1)
+            m = np.arange(m.min(), len(x), step)
             f_x, f_y, f_z = bezier_curve(
                 [x[indx], y[indx], z[indx]])
             smoothed_X.append([f_x,
@@ -130,11 +130,11 @@ def interpolate_chromosomes(X, lengths, kind="cubic", eps=1e-1):
             f_y = interpolate.Rbf(m, y[indx])
             f_z = interpolate.Rbf(m, z[indx])
 
-            m = np.arange(m.min(), len(x)-1, 0.1)
+            m = np.arange(m.min(), len(x), 0.1)
 
-            smoothed_X.append([f_x(np.arange(m.min(), m.max(), 0.1)),
-                               f_y(np.arange(m.min(), m.max(), 0.1)),
-                               f_z(np.arange(m.min(), m.max(), 0.1))])
+            smoothed_X.append([f_x(np.arange(m.min(), m.max(), step)),
+                               f_y(np.arange(m.min(), m.max(), step)),
+                               f_z(np.arange(m.min(), m.max(), step))])
 
         else:
             f_x = interpolate.interp1d(m, x[indx],
@@ -144,11 +144,11 @@ def interpolate_chromosomes(X, lengths, kind="cubic", eps=1e-1):
             f_z = interpolate.interp1d(m, z[indx],
                                        kind=kind)
 
-            m = np.arange(m.min(), len(x)-1, 0.1)
+            m = np.arange(m.min(), len(x), step)
 
-            smoothed_X.append([f_x(np.arange(m.min(), m.max(), 0.1)),
-                               f_y(np.arange(m.min(), m.max(), 0.1)),
-                               f_z(np.arange(m.min(), m.max(), 0.1))])
+            smoothed_X.append([f_x(np.arange(m.min(), m.max(), step)),
+                               f_y(np.arange(m.min(), m.max(), step)),
+                               f_z(np.arange(m.min(), m.max(), step))])
 
         begin = end
     return smoothed_X
