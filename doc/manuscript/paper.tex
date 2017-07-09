@@ -114,9 +114,39 @@ architecture of {\em P. falciparum}'s genome.
 asexual cycle}
 \label{sec:data}
 
+In the past year, two groups have published novel dataset studying {\em P.
+falciparum}'s 3D genome architecture using Hi-C. \citet{lemieux:genome-wide}
+studied several strains associated with populations expression unique
+\textit{var} genes, in order to study key folding properties of the 3D
+structure relating to \textit{var} gene expression.
+\citet{ay:three-dimensional} f three key-point of the development
+cycle.
+
 - Difficulty of the protocol on the AT-rich genome of p. falciparum.
 - Summary of the data
 
+\begin{table}
+\footnotesize
+\begin{tabular}{cccccc}
+\hline
+\textbf{Name} & \textbf{Strain} & \textbf{Stage} & \textbf{Resolution} &
+\textbf{Number of contacts} & \textbf{Reference} \\
+\hline
+\hline
+Ay-\textit{rings} & 3D7 & Late Rings & 10~kb & & \cite{ay:three-dimensional} \\
+Ay-\textit{trophozoites} & 3D7 & Trophozoites &10~kb &  & \cite{ay:three-dimensional} \\
+Ay-\textit{schizonts} & 3D7 & Schizonts & 10~kb & & \cite{ay:three-dimensional} \\
+Lemieux-\textit{A4+} & IT/BC6+ & Rings & 25~kb & & \cite{lemieux:genome-wide} \\
+Lemieux-\textit{A4} & IT/BC6- & Rings & 25~kb & & \cite{lemieux:genome-wide}\\
+Lemieux-\textit{A4} & IT/3G8 & Rings &  25~kb & & \cite{lemieux:genome-wide}\\
+Lemieux-\textit{DCJ\_On} & NF54/DCJ on & Rings & 25~kb &  &\cite{lemieux:genome-wide} \\
+Lemieux-\textit{DCJ\_Off} & NF54/DCF Off & Rings & 25~kb &  &\cite{lemieux:genome-wide} \\
+Lemieux-\textit{B15C2} & NF54/B15C2 & Rings & 25~kb &  & \cite{lemieux:genome-wide}\\
+\hline
+\end{tabular}
+\caption{Summary of the available {\em P. falciparum} Hi-C datasets}{ The
+number}
+\end{table}
 
 
 \section{Analyzing contact count data}
@@ -287,7 +317,7 @@ manner.
 
 To assess whether groups of genes are colocolized in a 3D model,
 \citet{ay:three-dimensional} leveraged a statistical method developped by
-\citet{witten:XXX}, which requires labeling each pair of loci in two groups:
+\citet{witten:assessment}, which requires labeling each pair of loci in two groups:
 "close" or "far". 
 
 The authors used varying distance
