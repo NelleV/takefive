@@ -42,6 +42,8 @@ AP2 = AP2.astype(float)
 
 if "25kb" in args.filename:
     resolution = 25000
+elif "20000" in args.filename:
+    resolution = 20000
 else:
     resolution = 10000
 
@@ -62,7 +64,7 @@ if not args.no_normalization:
 c = counts.copy().flatten()
 c.sort()
 vmax = c[int(0.99*len(c))]
-c = c[ c!= 0 ]
+c = c[c != 0]
 vmin = c[int(0.05*len(c))]
 fig, ax = plt.subplots(figsize=(12, 12))
 m = ax.matshow(counts, origin="bottom", norm=colors.SymLogNorm(5),
@@ -114,3 +116,34 @@ try:
     fig.savefig(outname, dpi=400)
 except IOError:
     pass
+
+centromeres = np.loadtxt("files/pf.cent")
+centromeres = centromeres.mean(axis=1) / resolution
+b, e = 0, 0
+for i, l in enumerate(lengths):
+    e += l
+    scounts = counts[b:e, b:e]
+    fig, ax = plt.subplots(figsize=(5, 5))
+    m = ax.matshow(scounts, origin="bottom", norm=colors.SymLogNorm(5),
+               extent=(0, l, 0, l),
+               cmap="Blues")
+    ax.axhline(centromeres[i], linestyle="--", linewidth=1, color="#000000")
+    ax.axvline(centromeres[i], linestyle="--", linewidth=1, color="#000000")
+    ax.set_xticks([])
+    ax.set_yticks([])
+
+    ap2 = AP2[:, 1:].mean(axis=1)[AP2[:, 0] - 1 == i] / resolution
+    [ax.axhline(a, linestyle=":", linewidth=1, color="g") for a in ap2]
+    [ax.axvline(a, linestyle=":", linewidth=1, color="g") for a in ap2]
+
+    try:
+
+        fig.savefig(
+            outname.replace(
+                ".pdf", "_%02d.pdf" % (i+1)).replace(
+                    ".png", "_%02d.png" % (i+1)),
+            dpi=400)
+    except IOError:
+        pass
+
+    b = e
