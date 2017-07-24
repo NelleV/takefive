@@ -19,6 +19,13 @@
 \usepackage{enumitem}
 \usepackage{xspace}
 
+\usepackage{booktabs}
+\usepackage[svgnames,table]{xcolor}
+\usepackage[tableposition=above]{caption}
+\usepackage{pifont}
+
+\newcommand*\CHECK{\ding{51}}
+
 % Two column foonotes
 \usepackage{dblfnote}
 
@@ -162,6 +169,8 @@ of genome architectures.
 
 \section*{Three-dimensional models of DNA from Hi-C data}
 
+\todo{A revoir}
+
 In this section, we review ``data-driven'' methods to infer 3D models of DNA
 from Hi-C data. These methods broadly fall into two categories: (i)
 \textit{consensus} approaches, that aim at inferring a unique mean structures
@@ -170,9 +179,9 @@ yield a population of structures.
 
 Both consensus and ensemble methods have benefits and drawbacks. Ensemble
 approaches are more biologically accurate: Hi-C data are derived from a
-population of cells, each of those with a uniquely folded 3D structure. A
-population of structure thus better may represents the variability of
-structures among ours cells. Yet, in addition of being more complex and
+population of cells, each of those with a uniquely folded 3D structure. The
+variability of structures among ours cells may thus be better represented by a
+population of structures. Yet, in addition of being more complex and
 computationally intensive, ensemble approaches raise the question of
 interpretability. Often, one has to fall back to interpreting the mean
 structure \citep{kalhor:genome}, or a reduced set of structures
@@ -184,13 +193,14 @@ visualization and analysis, this average structure can be easily integrated
 with other sources of data, such as RNA-seq, chip-seq etc, which are also
 population-based.
 
-After introducing some notations and common terminology, I will dive both in consensus
-and population inference methods.
+
+After introducing some notations and common terminology, I will dive both in
+consensus and population inference methods.
 
 \subsection*{Notation}
 
 A typical 3C/Hi-C experiment can be summarized as a contact
-count matrix $\mathbf{C} \in R^{n \times n}$, where each row and column
+count matrix $\mathbf{C} \in \RR^{n \times n}$, where each row and column
 correspond to a genomic-window (or loci), and each entry $c_{ij}$ to the
 number of times loci $i$ and $j$ have been observed interacting. Contact count
 matrices are subjected to biological and technical biases that need to be
@@ -199,8 +209,9 @@ hu:hicnorm}.
 
 Methods model chromosomes as a series of beads in 3D, each bead corresponding
 to a specific genomic window. We denote by $\textbf{X} \in \RR^{3 \times n}$
-the coordinate matrix of the structure(s) and $x_i \in \RR^3$ corresponds to
-the coordinate matrix of the i-th beads.
+the coordinate matrix of the structure(s), $x_i \in \RR^3$ corresponds to
+the coordinate matrix of the i-th beads and $d_{ij} = \|x_i - x_j\|_2$ the
+euclidean distance separating beads $i$ and $j$.
 
 \subsection*{Consensus models}
 
@@ -220,12 +231,11 @@ under constraints.
 \subsubsection*{Metric MDS-based methods}
 
 Early methods \citep{dekker:capturing, duan:three-dimensional,
-tanizawa:mapping, ay:three-dimensional} cast the
-3D inference problem as a multidimensional scaling (MDS) problem: chromosomes
-are models as a chain of beads, to place in 3D such that the distance between
-bead $i$ and $j$ matches as closely as possible a ``wish-distance''
-$\delta_{ij}$ derived
-from contact counts.
+tanizawa:mapping, ay:three-dimensional} cast the 3D inference problem as a
+multidimensional scaling (MDS) problem: chromosomes are models as a chain of
+beads, to place in 3D such that the distance between bead $i$ and $j$ matches
+as closely as possible a ``wish-distance'' $\delta_{ij}$ derived from contact
+counts.
 
 \begin{equation*}
 \renewcommand{\arraystretch}{2}
@@ -247,18 +257,18 @@ properties of fractal globule polymers, \citet{tanizawa:mapping} inferred the
 count-to-distance mapping by fitting the relationship using known pairwise
 distances obtained through high-resolution FISH measures. While parameters of
 these counts-to-distance functions vary, most of them can be summarized as a
-power-law relationship : $c_{ij} = \beta d_{ij}^\alpha$.
+power-law relationship: $c_{ij} = \beta d_{ij}^\alpha$.
 
 \citet{lesne:3d} proposes a different approach to convert counts into
-distances: they borrow the concept of shortest path from graph theory. A
-graph is constructed from the contact map by considering each loci as a node.
-Loci seen interacting are connected through an edge of weight
-$\frac{1}{c_{ij}}$. The authors then compute wish-distances $\delta_{ij}$ as
-the shortest path between node $i$ and $j$ in the graph. Constructing
-wish-distances in such a way has two advantages: (i) low contact counts do not
-contribute much to the wish-distances; (ii) the resulting wish-distances form
-a distance matrix, and thus an optimal solution to the MDS can be found.
-
+distances: they borrow the concept of shortest path from graph theory to
+create a distance matrix. A graph is constructed from the contact map by
+considering each loci as a node. Loci seen interacting are connected through
+an edge of weight $\frac{1}{c_{ij}}$. The authors then compute wish-distances
+$\delta_{ij}$ as the shortest path between node $i$ and $j$ in the graph.
+Constructing wish-distances in such a way has two advantages: (i) low contact
+counts do not contribute much to the wish-distances; (ii) the resulting
+wish-distances form a distance matrix, and thus an optimal solution to the MDS
+can be found.
 
 In addition of having subtle differences in the derivation of wish distances,
 the different methods also vary by the inclusion of weights to reflect
@@ -269,20 +279,27 @@ summarizes the characteristic of each method.
 \begin{table*}
 \scriptsize
 \centering
-\begin{tabular}{cccccc}
+\begin{tabular}{rccccccccc}
 \hline
-\textbf{Paper} & Organism & Full or partial genome & Counts-to-distance mapping & \textbf{Constraints}
-& \textbf{Weights}\\
+\multirow{2}{*}{\textbf{Paper}} & \multirow{2}{*}{\textbf{Organism}} &
+\textbf{Full or}
+& \textbf{Counts-to-distance} &
+\multicolumn{4}{c}{\multirow{2}{*}{\textbf{Constraints}}}
+& \multirow{2}{*}{\textbf{Weights}}\\
+ & & \textbf{partial} & \textbf{mapping} &  \\
+ \cmidrule(lr){5-8} 
+ & & & & Adj. & rDNA & C & T & \\
 \hline
-\cite{dekker:capturing} & {\em S. cerevisiae} & Chr III & Worm-like chain behavior & - \\
+\cite{dekker:capturing} & {\em S. cerevisiae} & Chr III & Worm-like chain
+behavior & & & & \\
 \cite{duan:three-dimensional} & {\em S. cerevisiae} & Whole-genome & Linear
-relationship & Adjacent beads, rDNA & - \\
+relationship & \CHECK &  \CHECK & \CHECK &  & \\
 \cite{tanizawa:mapping} & {\em S. pombe} & Whole-genome &
-FISH-derived relationship & Adjacent beads, rDNA, telomeres, centromeres & - \\
+FISH-derived relationship & \CHECK & \CHECK & \CHECK & \CHECK &  \\
 \cite{ay:three-dimensional} & {\em P. falciparum} & Whole-genome & Fractal
-globule derived relationship & adjacent
-beads & $w_{ij} = \frac{1}{\delta_{ij}^2}$ \\
-\cite{lesne:3d} & - & Whole-genome & \textit{ad hoc} & - & - \
+globule derived relationship & \CHECK  & & &
+ & $\frac{1}{\delta_{ij}^2}$ \\
+\cite{lesne:3d} & & Whole-genome & \textit{ad hoc} & & & & & \
 \end{tabular}
 \caption{Differences between MDS-based methods}{}
 \label{table:mds_detail}
@@ -294,17 +311,18 @@ beads & $w_{ij} = \frac{1}{\delta_{ij}^2}$ \\
 A crucial step of MDS-based method is the conversion of counts into
 wish-distances. As described earlier, converting contact counts into
 wish-distances require strong assumptions that may not be met in practice. For
-example, this mapping may change from one organism to another
+example, this mapping changes from one organism to another
 \citep{fudenberg:higher-order}, from one resolution to another
-\citep{zhang:inference}, from one genomic distance range to another
-\citep{ay:statistical}, or from one time point to another during the cell
-cycle \citep{le:high-resolution, ay:three-dimensional}.
+\citep{zhang:inference} or even from one time point to another during the cell
+cycle \citep{le:high-resolution, ay:three-dimensional}. Several methods have
+since been proposed to alleviate this problem.
 
-Two methods have since been proposed to alleviate this problem.
-\citet{ben-elazar:spatial} proposes to cast the inference as a
-\emph{non-metric MDS} \citep{kruskal:multidimensional}, where the 3D structure
-is inferred jointly with the wish-distances. \fixme{except they do a bunch of
-stuff to the count data}.
+\citet{ben-elazar:spatial} casts the inference as a \emph{non-metric MDS}
+\citep{kruskal:multidimensional}, where the 3D structure is inferred jointly
+with the wish-distances. The authors first filter the
+interaction counts to keep only the most significant interactions and
+interpolate the missing values to obtain a smooth, symmetric positive definite
+matrix.
 
 \citet{zhang:inference} proposes to parametrize the count-to-distance mapping
 as a power-law ($d = \beta c^\alpha)$, and to infer jointly the parameters
@@ -316,26 +334,40 @@ the optimal structure.
 \subsubsection*{Other ad-hoc optimization methods}
 
 A series of methods cast the inference as an optimization method, where the
-objective function is designed by hand to fullfill a number of properties
-\citep{trieu:large, trieu:3D, trieu:MOGEN}.
+objective function is designed by hand to fulfill a number of properties
+\citep{trieu:large, trieu:MOGEN, trieu:3D}. For example, \citep{trieu:large}
+formulates an optimization problem that attempts to place the beads such that,
+if a significant contact is observed between $i$ and $j$, then $\| x_i - x_j
+\| < d_c$. On the other hand, if a no significant contact is observed, then
+the two beads should be no closer than $d_c$. In addition, the authors also
+place constraints on the minimum distance separating two beads and maximum
+distances between two beads. To satisfy all those properties, the authors
+propose to minimize the following objective function:
 
-For example, \citep{trieu:large} formulates an optimization problem that
-attempts to place the beads such that, if a significant contact is observed
-between $i$ and $j$, then $\| x_i - x_j \| < d_c$. On the other hand, if a
-no significant contact is observed, then the two beads should be no closer
-than $d_c$. In addition, the authors also place constraints on the minimum
-distance separating two beads and maximum distances between two beads. To
-satisfy all those properties, the authors propose to minimize the following
-objective function:
+\begin{equation*}
+\begin{aligned}
+\mathcal{O}(X, \delta_{ij}) = & \underset{i, j | c_{ij} \neq 0, |i-j| \neq 1}{\sum} \Bigg(W_1 \text{tanh}(d^2_c -
+d^2_{ij}) c_{ij} + W_2 \frac{\text{tanh}(d^2_{ij} - d^2_\text{min})}{N} \Bigg) \\
+& \underset{i, j | c_{ij} = 0}{\sum} \Bigg(W_3 \frac{\text{tanh}(d^2_\text{max} -
+d^2_{ij})}{N} + W_4 \frac{\text{tanh}(d^2_{ij} -
+d^2_{c})}{N}\Bigg) \\
+& \underset{i, j | |i - j| = 1}{\sum} \Bigg(W_1 \frac{\text{tanh}(d^2_\text{amax} -
+d^2_{ij})}{N} + W_2 \frac{\text{tanh}(d^2_{ij} -
+d^2_\text{min})}{N}\Bigg) \,,\\
+\end{aligned}
+\end{equation*}
 
-\fixme{add damn objective function}
-
+where $N$ is the total number of interaction, $(W_1, W_2, W_3, W_4)$ weights
+associated to each term, $d_\text{amax}$ the maximum distance separating two
+adjacent beads, $d_\text{min}$ the minimum distance separating two adjacent
+beads and $d_\text{max}$ the maximum distance between two beads. 
 This method is then generalized to include \textit{trans} contact counts data
-\citep{trieu:MOGEN}.
+\citep{trieu:MOGEN}
 
-\cite{trieu:MOGEN} proposes to exploit the Lozentzian function, to formulate a
-constraint-based problem. They first convert the contact counts $c_{ij}$ into
-wish-distances, and cast the following optimization problem:
+To give another example of carefully crafted optimization, \cite{trieu:3D}
+proposes to exploit the Lozentzian function, to formulate a constraint-based
+problem. They first convert the contact counts $c_{ij}$ into wish-distances,
+and cast the following optimization problem:
 
 \begin{equation*}
 \renewcommand{\arraystretch}{2}
@@ -354,11 +386,11 @@ Loretzian function to have very high derivative when constraints are broken.
 
 \subsubsection*{Statistical-based models}
 
-\citet{varoquaux:statistical} proposes a novel approach based on
-statistical modeling of contact counts as random Poisson variables where the
-intensity is a function of the distance: $c_{ij} \sim \text{Poisson}(\beta
-d_{ij}^\alpha)$, and some perform the optimization only including a subset of
-contact counts. The authors propose to cast the
+\citet{varoquaux:statistical} proposes a novel approach called \texttt{Pastis}
+based on statistical modeling of contact counts as random Poisson variables
+where the intensity is a function of the distance: $c_{ij} \sim
+\text{Poisson}(\beta d_{ij}^\alpha)$, and some perform the optimization only
+including a subset of contact counts. The authors propose to cast the
 inference of 3D models as maximizing the likelihood:
 
 \begin{equation}
@@ -370,76 +402,112 @@ inference of 3D models as maximizing the likelihood:
 \end{array}
 \end{equation}
 
+
+\texttt{Pastis} can automatically adjust the parameters $\beta$, $\alpha$ of
+the counts-to-distance transfer function and infer a genome structure that
+best explains the observed data.
+
+
 \subsection*{Ensemble methods}
 
-\citet{bau:three-dimensional}
-\cite{umbarger:three-dimensional}
-\cite{hu:bayesian}
+{\em Ensemble approaches} aim at inferring a population of structures
+representative of the contact count map. The methods fall into two distinct
+categories: the first type of problem casts a non-convex or ill-defined
+optimization problem and sample local minima of the function
+\citep{bau:three-dimensional, umbarger:three-dimensional}, while the second
+type proposes a statistical modeling of the problem and samples the posterior
+distribution \citep{rousseau:three, hu:bayesian}.A parallel can be made
+between the first group of methods and {\em Consensus} MDS type of approaches,
+and the second with {\em Consensus} statistical based methods.
+
+\subsubsection*{Sampling local minima}
+
+\citet{umbarger:three-dimensional,bau:three-dimensional, kalhor:genome} models
+chromosomes as a series of beads, linked by restraining oscillators. These
+oscillators can be thought of as a ``force'' between beads so that they come
+into contact or ensure a minimal or maximal distance between those. The models
+includes three differente types of restraints: (i) beads seen interacting are
+restrained with harmonic oscillators of strengths derived from the contact
+counts; (ii) adjacent beads are ensured to be neither too close nor too far
+from one another; (iii) the last oscillators are activated only when
+constraints are not fulfilled to XXX.  This yields an optimization problem
+with a large number of local minima, which the authors sample from by running
+50,000 minimizations starting from random starts.
+
+\subsubsection*{Estimating the posterior distribution}
+
+Similarly to \citet{varoquaux:statistical}, \citet{rousseau:three} and
+\citet{hu:bayesian} proposes to model contact counts with a formal
+probabilistic model. \citet{rousseau:three} models observed contact counts
+$c_{ij}$ as a random Gaussian variable of mean $\beta d_{ij}^{\alpha}$,
+$\alpha \leq 0$ and variance $\sigma_{ij}$ estimated directly from the contact
+count data, while \citet{hu:bayesian} models contact counts as random Poisson
+variables of mean $\beta d_{ij}^\alpha$. The authors then sample from the
+posterior using MCMC.
 
 \subsection*{Single-cell models}
 
 The last category of data-driven methods to infer the 3D architecture of the
 genome rely on a new protocol to probe single-cell for their 3D structures
-\citep{nagano:single-cell, XXX}. Single-cell Hi-C is still in its early days,
+\citep{nagano:single-cell,ramani:massively}. Single-cell Hi-C is still in its early days,
 and only a handful of data sets are today publicly available. The contact maps
 originating from these data sets are very sparse, and specific methods to
 infer 3D structures need to be developed specifically for sc-HiC. The
 challenge of constructing models from this data has been tackled very
 differently by two groups. 
 
-\citet{nagano:single-cell} models the chromosome as a series of beads linked
-as a flexible fiber. Loci seen interacting in the single-cell contact maps are
-constrained to be in contact. The authors then sample a population of possible
-structures.
+Akin to {\em consensus} MDS-like method and {\em ensemble}-local minima
+methods,  the first approach is to consider each contact as a constraint and
+to formulate
+an under constrained optimization problem. A population of structures
+satistifying the constraints can be found by sampling local minimas.
 
-\citet{paulsen:manifold} formulate a \textit{manifold based optimization},
-where a low rank PSD matrix (and thus a distance matrix) is optimized to be as
-close as possible to the sparse contact count matrix. Applying classical MDS
-on this low rank PSD matrix then yields a 3D model of the genome.
-
+\citet{paulsen:manifold} proposes a very different method, and formulate a
+\textit{manifold based optimization}, where a low rank PSD matrix (and thus a
+distance matrix) is optimized to be as close as possible to the sparse contact
+count matrix. Applying classical MDS on this low rank PSD matrix then yields a
+3D model of the genome.
 
 \begin{table}[ht!]
 \begin{center}
 \footnotesize
 \begin{tabular}{rlccccc}
 \hline
-\multirow{2}{*}{\emph{\footnotesize Publication}} & \multirow{2}{*}{\emph{\footnotesize Name}} &
-\multirow{2}{*}{\emph{\footnotesize Con.}} &
-\multirow{2}{*}{\emph{\footnotesize Pop.}}
-&\multirow{2}{*}{\emph{\footnotesize MDS-based}} & \emph{\footnotesize Statistical} &
-\multirow{2}{*}{\emph{\footnotesize Availability}} \\
-& & & & & \emph{\footnotesize model} & \\
+\multirow{2}{*}{\textbf{\footnotesize Publication}} & \multirow{2}{*}{\textbf{\footnotesize Name}} &
+\textbf{\footnotesize Consensus or} 
+&\multirow{2}{*}{\textbf{\footnotesize MDS-based}} & \textbf{\footnotesize Statistical} &
+\multirow{2}{*}{\textbf{\footnotesize Available}} \\
+& & \textbf{\footnotesize Ensemble}
+ & & \textbf{\footnotesize model} & \\
 \hline
 \hline
-\footnotesize{\cite{dekker:capturing}} & & & & & & \\
-\footnotesize{\cite{duan:three-dimensional}} &  & x & & x & & x \\
-\footnotesize{\cite{tanizawa:mapping}} & & x & & x & & \\
-\footnotesize{\cite{ay:three-dimensional}} & & x & & x & & \\
-\footnotesize{\cite{ben-elazar:spatial}} & & x & & x & & x \\
-\footnotesize{\cite{varoquaux:statistical}} & Pastis & x & & & x & x\\
-\footnotesize{\cite{bau:three-dimensional}} & & & x & & & \\
-\footnotesize{\cite{umbarger:three-dimensional}} & & x & & & &\\
-\footnotesize{\cite{zhang:inference}} & chromSDE & x & & x & & x\\
-\footnotesize{\cite{rousseau:three}} & & & x & & x & x\\
-\footnotesize{\cite{hu:bayesian}} & Bach & x & x & & x & x\\
-\footnotesize{\cite{kalhor:genome}} & & & x & & &\\
-\footnotesize{\cite{lesne:3d}} & ShRec3D & x & & x & & x \\
-\footnotesize{\cite{trieu:large}} & & x & & & & \\
-\footnotesize{\cite{trieu:3D}} & & x & & & & \\
-\footnotesize{\cite{trieu:MOGEN}} & MOGEN & x & & & & \\
-\footnotesize{\cite{nagano:single-cell}} & & x & & & & \\
-\footnotesize{\cite{paulsen:manifold}} & & x & & x & & x \\
+\footnotesize{\cite{dekker:capturing}} & & C & & & \\
+\footnotesize{\cite{duan:three-dimensional}} &  & C & \CHECK & & \CHECK \\
+\footnotesize{\cite{tanizawa:mapping}} & & C & \CHECK & & \\
+\footnotesize{\cite{ay:three-dimensional}} & & C & \CHECK & & \\
+\footnotesize{\cite{ben-elazar:spatial}} & & C & \CHECK & & \CHECK \\
+\footnotesize{\cite{varoquaux:statistical}} & Pastis & C & & \CHECK & \CHECK\\
+\footnotesize{\cite{bau:three-dimensional}} & & E & & &  \\
+\footnotesize{\cite{umbarger:three-dimensional}} & & E  & & &\\
+\footnotesize{\cite{zhang:inference}} & chromSDE & C &  \CHECK & & \CHECK\\
+\footnotesize{\cite{rousseau:three}} & & E & & \CHECK & \CHECK\\
+\footnotesize{\cite{hu:bayesian}} & Bach & E/C &  & \CHECK & \CHECK\\
+\footnotesize{\cite{kalhor:genome}} & & E &   & &\\
+\footnotesize{\cite{lesne:3d}} & ShRec3D & C  & \CHECK & & \CHECK \\
+\footnotesize{\cite{trieu:large}} & & C & & & \\
+\footnotesize{\cite{trieu:3D}} & & C & &  & \\
+\footnotesize{\cite{trieu:MOGEN}} & MOGEN & C & & & \\
+\footnotesize{\cite{nagano:single-cell}} & & E & & & \\
+\footnotesize{\cite{paulsen:manifold}} & & C & \CHECK & & \CHECK \\
 \hline
 \end{tabular}
 \end{center}
 \caption{\bf A comparison of 3D inference methods}{In this table, we summarize
 properties of published methods to infer the 3D structure of the genome: (1)
-is it a consensus or a population based inference? (2) Is it an MDS based
+is it a consensus or a ensemble based inference? (2) Is it an MDS based
 method? (3) or relies on a statistical modeling; (4) is the software
 available or not (to the best of our knowledge).}
 \end{table}
-
-
 
 \section*{Modeling DNA as a flexible fibers under constraints}
 
@@ -459,51 +527,61 @@ the hallmarks of the genome architecture are discovered.
 The budding yeast \textit{S. cerivisiae}'s 3D structure has been extensively
 studied, both through 3C-type studies \citep{dekker:capturing,
 duan:three-dimensional, burton:} and through bio-imaging experiments
-\citep{XX:}.
+\citep{XX}. The small size of its genome, the well-known hallmarks of its
+genome architecture and the availability of high resolution contact maps and
+FISH data set quickly led several teams to investigate the minimal set of
+constraints needed to reproduce the hallmarks of its genome architecture.
 
+\cite{tjong:physical, tokuda:dynamical, tjong:physical} model {\em S.
+cerevisiae}'s chromosomes as flexible random fibers under a small set of
+constraints. While the exact modeling proposed by the three groups differ, the
+set of constraints are similar: \textit{(i)} the chromosomes are constrained
+into a spherical ball representing the nucleus; \textit{(ii)} centromeres are
+constrained into a spherical ball tethered to the nuclear membrane;
+\textit{(iii)} telomeres are tethered to the nuclear membraine; \textit{(iv)}
+rDNA is constrained into the nucleolus, represented as a spherical ball
+opposite to the centromeres.
 
-\citet{tjong:physical} showed \textit{S. cerevisiae}'s structure can be mostly
-explained by a large set of constrained yet random population of structures
-following a simple volume exclusion model. We repeated the experiment on {\em
-P. falciparum}, and showed that, despite recovering similar results on {\em S.
-cerevisiae}, the same set of constraints is not sufficient to explain {\em P.
-falciparum}'s Hi-C contact map. 
-
-Briefly, let us recall the methodology presented by \citet{tjong:physical}. We
-construct a population of three-dimensional structures by modeling chromosomes
-as random configuration of beads-on-a-string, subjected to the following constraints.
+Let us take a closer look at the model proposed by \citet{tjong:physical}.
+The 16 chromosomes are modeled as beads-on-a-string spaced 3.2kb apart. The
+authors cast an optimization problem including the following restraints: 
 
 \begin{itemize}
-\item \textbf{Adjacent Beads Constraints} Two adjacent beads spaced 3.2kb apart are constrained to be 30nm apatr.
-\item \textbf{Volume Exclusion Constraints} Each pairs of beads are spaced at minimum XX apart
-\item \textbf{Nucleus Constraint} All beads lie in a spherical nucleus of specific
-radius (XXX)
+\item \textbf{Adjacent Beads Constraints} Two adjacent beads spaced 3.2kb
+apart are constrained to be 30~nm apart;
+\item \textbf{Volume Exclusion Constraints} Each pairs of beads are spaced at
+minimum $30~nm$ apart;
+\item \textbf{Nucleus Constraint} All beads lie in a spherical nucleus of
+radius $1\mu m$
 \item \textbf{Centromeres Constraints} Centromeres are localized in a small sphere of
 50nm abutting the nuclear envelop.
 \item \textbf{Telomere Constraints} Telomeres are located at most 50nm from the nuclear envelop.
-\end{itemize}
-
-\citet{tjong:physical} then formulates an optimization problem that includes
-in addition to all the aforementioned constraints a penalty term on three
-adjacent beads accounting for chromatin stiffness.
-
+\item \textbf{rDNA restraint} The repeated rDNA located on chromosome 12 is
+constrained to be inside the nucleolus;
+\item \textbf{Nucleolus exclusion restraint} All beads that isn't rDNA is
+constrained outside of the nucleolus;
+\item \textbf{Chain stiffness}: an angular restraint is imposed on three
+consecutive beads to reproduce chain stiffness:
 \begin{equation}
 \frac{1}{2} k_{\text{angle}} \sum^{N - 2}_{i = 1} \left( 1 - \frac{x_{i + 1} -
 x_i}{\|x_{i + 1} - x_i\|} \cdot \frac{x_{i + 2} - x_{i + 1}}{\|x_{i + 2} -
   x_{i + 1}\|} \right)^2\,,
 \end{equation}
+\end{itemize}
 
+In the end, the objective function minimized is the following:
 
+\begin{equation}
+\end{equation}
 
-\citet{tokuda:dynamical}
-
-\citet{wong:how} model the budding yeast chromosomes a semi-flexible fiber
-constrained in a nucleus, and applies 4 sequences specific forces on this
-fiber to obtain certain properties: (1) centromeres are attached to a single
-point of the nucleus by a segment; (2) telomeres are subjected to an outward
-force, that pushes them towards the nuclear membrane; (3) rDNA is thicken; (4)
-apply a random brownian movement. This model recovers many of the known
-hallmarks of the 3D architecture of {\em S. cerevisiae}.
+Using IMP, the authors generate a 25,000 structures, all of which respect the
+constraints listed above. The population of structures is then used to created
+a ``volume-exclusion contact map'', considering that two beads that are less
+then 45~nm apart from a contact. The Pearson correlation of the
+volume-exclusion contact map and the Hi-C one are highly correlated,
+demonstrating this small set of constraints fully explain the observed counts.
+In addition, the population of structures also explain FISH experiments
+previously published.
 
 
 \subsection*{\textit{P. falciparum}'s 3D structure cannot be explained by a
@@ -529,7 +607,6 @@ cycle. Table~\ref{tab:data} summarizes the available data sets and their key
 properties after processing the data as described in
 \citet{ay:three-dimensional} and combining all available libraries for each
 life-cycle stage and strain.
-
 
 \subsection*{Structure stability}
 
