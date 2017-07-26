@@ -45,7 +45,8 @@
 \usepackage{graphics}
 
 %% Use natbib with these recommended options
-\usepackage[authoryear,comma,longnamesfirst,sectionbib]{natbib} 
+%\usepackage[authoryear,comma,longnamesfirst,sectionbib]{natbib} 
+\usepackage{natbib}
 
 
 %\externaldocument{supp}
@@ -83,8 +84,7 @@ remains a major disease burden in tropical and subtropical countries and an
 impediment to economic development. In Africa, where more than 90\% of the
 cases and deaths occurs, the effects of malaria extend far beyond direct
 measures of mortality and the disease is thought to cost more than US\$21
-billion a year \citep{onwejkwe:do}.
-
+billion a year \citep{onwujekwe:do}.
 Malaria is caused by small unicellular protozoan {\em Plasmodium}, infecting
 its host through a mosquito bite. Out of the 5 species that can infect human,
 {\em P. falciparum} is by the far the most deadly with 99\% of the deaths
@@ -105,12 +105,12 @@ and the complications of the disease: anemia, tertian fever, \dots
 
 While efficacious vaccines still remains a hope and drug resistance to anti
 malaria continues to arise, genomic-based research on malaria seeks new
-avenues for developing novel therapies \citet{kirchner:recent}. One of the
+avenues for developing novel therapies \citep{kirchner:recent}. One of the
 limiting factors of developments of new drugs is our poor understanding of the
 mechanisms underlying the parasite's complex life cycle. While the development
 of {\em P. falciparum} through the different stages of its life is thought to
 be driven by coordinated changes in gene expression, the relative paucity of
-transcription factors points to unusual gene regulatory mechanisms . Meanwhile,
+transcription factors points to unusual gene regulatory mechanisms. Meanwhile,
 the relative abundance of proteins related to chromatin structures, mRNA decay
 and translation rates suggests alternative mechanisms of gene regulation at the
 epigenetic and post-translational levels
@@ -125,14 +125,18 @@ the three-dimensional folding of the genome, paving the way for a better
 understanding of the relations between 3D structure and gene regulation,
 replication timing, epigenetic changes as well as many other biological
 processes. The 3D genome of a wide variety of organisms has been studied in
-the past year, including many species of yeasts \citet{duan:three-dimensional,
-burton:xx}, bacteria, flies, plants and numerous human and mouse cell lines.
+the past year, including many species of yeasts \citep{duan:three-dimensional,
+burton:species-level, mizuguchi:cohesin-dependant}, bacteria
+\citep{umbarger:three-dimensional}, flies \citep{sexton:three-dimensional},
+plants \citep{feng:genome-wide, wang:genome-wide} and numerous human and mouse
+cell lines \citep{lieberman-aiden:comprehensive, rao:3D}.
+
 Within the past few years, two studies of the three-dimensional structure of
 {\em P. falciparum} have been released.  \citet{lemieux:genome-wide} probed
 several strains of {\em P. falciparum} to understand the link between 3D
 structure and the complex regulation of \textit{var} genes, a family of genes
 involved the invasion of red blood cell and also responsible for the
-parasite's great capacity to evade immuno-therapy.
+parasite's great capacity to evade our immune system.
 \citet{ay:three-dimensional} assayed the 3D structure of the genome of the
 parasite during three key stages of the erythrocytic cycle.
 \citet{ay:multiple} reviews the key biological findings of those studies.
@@ -169,13 +173,17 @@ of genome architectures.
 
 \section*{Three-dimensional models of DNA from Hi-C data}
 
-\todo{A revoir}
+The development of genowe-wide and high-throughput protocols to probe samples
+for their 3D genome architecture naturally paved the way to systematic and in
+depth study of the folding mechanisms of DNA. 
 
-In this section, we review ``data-driven'' methods to infer 3D models of DNA
-from Hi-C data. These methods broadly fall into two categories: (i)
-\textit{consensus} approaches, that aim at inferring a unique mean structures
-best representing the contact count data; (ii) \textit{ensemble} methods that
-yield a population of structures.
+Over the past 10 years, the challenge of building 3D models from contact maps
+have been tackled by a plethora of methods. These model chromosomes as a
+series of beads, and attempt to place the beads in a 3D euclidean space to
+well represent the contact map. ``data-driven'' methods broadly fall into two
+categories: (i) \textit{consensus} approaches, that aim at inferring a unique
+mean structures best representing the contact count data; (ii)
+\textit{ensemble} methods that yield a population of structures.
 
 Both consensus and ensemble methods have benefits and drawbacks. Ensemble
 approaches are more biologically accurate: Hi-C data are derived from a
@@ -193,49 +201,29 @@ visualization and analysis, this average structure can be easily integrated
 with other sources of data, such as RNA-seq, chip-seq etc, which are also
 population-based.
 
-
-After introducing some notations and common terminology, I will dive both in
-consensus and population inference methods.
-
-\subsection*{Notation}
-
-A typical 3C/Hi-C experiment can be summarized as a contact
-count matrix $\mathbf{C} \in \RR^{n \times n}$, where each row and column
-correspond to a genomic-window (or loci), and each entry $c_{ij}$ to the
-number of times loci $i$ and $j$ have been observed interacting. Contact count
-matrices are subjected to biological and technical biases that need to be
-corrected \citep{imakaev:iterative, cournac:normalization, yaffe:probabilistic,
-hu:hicnorm}.
-
-Methods model chromosomes as a series of beads in 3D, each bead corresponding
-to a specific genomic window. We denote by $\textbf{X} \in \RR^{3 \times n}$
-the coordinate matrix of the structure(s), $x_i \in \RR^3$ corresponds to
-the coordinate matrix of the i-th beads and $d_{ij} = \|x_i - x_j\|_2$ the
-euclidean distance separating beads $i$ and $j$.
-
 \subsection*{Consensus models}
 
-Consensus methods aim at inferring a model that best represents the contact
-count matrix. They model each chromosome by a chain of beads, and attempt to
-place the beads in a 3D space to minimize an objective function
-$\mathcal{O}(\mathbf{O}, \mathbf{C})$, sometimes
-under constraints.
+Consensus methods aim at inferring a model $\mathbf{X} \in \RR^{3 \times n}$
+that best represents the contact count matrix $\mathbf{X} \in \RR^{3 \times
+n}$, usually through the minimization of an objective function
+$\mathcal{O}(\mathbf{O}, \mathbf{C})$, sometimes under constraints.
 
 \begin{equation*}
 \renewcommand{\arraystretch}{2}
 \begin{array}{ccl}
-\underset{\Xb}{\text{minimize}} & & \mathcal{O}(\mathbf{C}, \Xb)
+\underset{\Xb}{\text{minimize}} & & \mathcal{O}(\mathbf{C}, \Xb) \,,
 \end{array}
 \end{equation*}
 
+
 \subsubsection*{Metric MDS-based methods}
 
-Early methods \citep{dekker:capturing, duan:three-dimensional,
-tanizawa:mapping, ay:three-dimensional} cast the 3D inference problem as a
+Early methods cast the 3D inference problem as a
 multidimensional scaling (MDS) problem: chromosomes are models as a chain of
 beads, to place in 3D such that the distance between bead $i$ and $j$ matches
 as closely as possible a ``wish-distance'' $\delta_{ij}$ derived from contact
-counts.
+counts \citep{dekker:capturing, duan:three-dimensional,
+tanizawa:mapping, ay:three-dimensional} .
 
 \begin{equation*}
 \renewcommand{\arraystretch}{2}
@@ -248,16 +236,14 @@ counts.
 
 
 The first step is thus to find an adequate count-to-distance mapping to
-convert contact counts into pairwise wish-distances $\delta_{ij}$.
+convert contact counts into pairwise wish-distances $\delta_{ij}$. 
 \citet{dekker:capturing} models the 78 pairwise contact count of {\em S.
 cerevisiae}'s chromosome III as a Worm-like chain polymer,
 \citet{duan:three-dimensional} uses a linear mapping between contact counts
 and wish distances, \citet{ay:three-dimensional} relies on the biophysical
 properties of fractal globule polymers, \citet{tanizawa:mapping} inferred the
 count-to-distance mapping by fitting the relationship using known pairwise
-distances obtained through high-resolution FISH measures. While parameters of
-these counts-to-distance functions vary, most of them can be summarized as a
-power-law relationship: $c_{ij} = \beta d_{ij}^\alpha$.
+distances obtained through high-resolution FISH measures. 
 
 \citet{lesne:3d} proposes a different approach to convert counts into
 distances: they borrow the concept of shortest path from graph theory to
@@ -314,22 +300,14 @@ wish-distances require strong assumptions that may not be met in practice. For
 example, this mapping changes from one organism to another
 \citep{fudenberg:higher-order}, from one resolution to another
 \citep{zhang:inference} or even from one time point to another during the cell
-cycle \citep{le:high-resolution, ay:three-dimensional}. Several methods have
-since been proposed to alleviate this problem.
-
-\citet{ben-elazar:spatial} casts the inference as a \emph{non-metric MDS}
-\citep{kruskal:multidimensional}, where the 3D structure is inferred jointly
-with the wish-distances. The authors first filter the
-interaction counts to keep only the most significant interactions and
-interpolate the missing values to obtain a smooth, symmetric positive definite
-matrix.
-
-\citet{zhang:inference} proposes to parametrize the count-to-distance mapping
-as a power-law ($d = \beta c^\alpha)$, and to infer jointly the parameters
-jointly with the structure. In addition, the authors propose to add a
-penalization term for non-interacting beads. The proposed penalization allows
-to cast the problem as a convex optimization and thus guarantees to retrieve
-the optimal structure.
+cycle \citep{le:high-resolution, ay:three-dimensional}. To alleviate this
+problem, after filtering interaction counts based on significance and
+interpolation of missing values, \citet{ben-elazar:spatial} casts the
+inference as a \emph{non-metric MDS} \citep{kruskal:multidimensional}, where
+the 3D structure is inferred jointly with the wish-distances. Another idea is
+to parametrize the count-to-distance mapping as a power-law ($d = \beta
+c^\alpha)$, and to infer jointly the parameters jointly with the structure
+\citet{zhang:inference}.
 
 \subsubsection*{Other ad-hoc optimization methods}
 
@@ -383,6 +361,8 @@ wish-distance $\delta_{ij}$ and the euclidean distance $d_{ij}$ between bead
 $i$ and $j$ similarly to MDS-based method, but exploiting the property of the
 Loretzian function to have very high derivative when constraints are broken.
 
+\fixme{maybe skip this section}
+
 
 \subsubsection*{Statistical-based models}
 
@@ -405,18 +385,21 @@ inference of 3D models as maximizing the likelihood:
 
 \texttt{Pastis} can automatically adjust the parameters $\beta$, $\alpha$ of
 the counts-to-distance transfer function and infer a genome structure that
-best explains the observed data.
+best explains the observed data. The strength of this methods comes from the
+robustness to low signal-to-noise ratio.
 
+\fixme{add results on the P. falciparum to show pastis's results on 
+super noisy data}
 
 \subsection*{Ensemble methods}
 
 {\em Ensemble approaches} aim at inferring a population of structures
 representative of the contact count map. The methods fall into two distinct
-categories: the first type of problem casts a non-convex or ill-defined
+categories: the first type of problem casts a restraint-based 
 optimization problem and sample local minima of the function
 \citep{bau:three-dimensional, umbarger:three-dimensional}, while the second
 type proposes a statistical modeling of the problem and samples the posterior
-distribution \citep{rousseau:three, hu:bayesian}.A parallel can be made
+distribution \citep{rousseau:three, hu:bayesian}. A parallel can be made
 between the first group of methods and {\em Consensus} MDS type of approaches,
 and the second with {\em Consensus} statistical based methods.
 
@@ -443,7 +426,8 @@ $c_{ij}$ as a random Gaussian variable of mean $\beta d_{ij}^{\alpha}$,
 $\alpha \leq 0$ and variance $\sigma_{ij}$ estimated directly from the contact
 count data, while \citet{hu:bayesian} models contact counts as random Poisson
 variables of mean $\beta d_{ij}^\alpha$. The authors then sample from the
-posterior using MCMC.
+posterior using MCMC. Obtaining a consensus structure from such a method can
+be accomplished by selecting the maximum a posteriori.
 
 \subsection*{Single-cell models}
 
@@ -470,7 +454,7 @@ count matrix. Applying classical MDS on this low rank PSD matrix then yields a
 
 \begin{table}[ht!]
 \begin{center}
-\footnotesize
+\scriptsize
 \begin{tabular}{rlccccc}
 \hline
 \multirow{2}{*}{\textbf{\footnotesize Publication}} & \multirow{2}{*}{\textbf{\footnotesize Name}} &
@@ -481,24 +465,24 @@ count matrix. Applying classical MDS on this low rank PSD matrix then yields a
  & & \textbf{\footnotesize model} & \\
 \hline
 \hline
-\footnotesize{\cite{dekker:capturing}} & & C & & & \\
-\footnotesize{\cite{duan:three-dimensional}} &  & C & \CHECK & & \CHECK \\
-\footnotesize{\cite{tanizawa:mapping}} & & C & \CHECK & & \\
-\footnotesize{\cite{ay:three-dimensional}} & & C & \CHECK & & \\
-\footnotesize{\cite{ben-elazar:spatial}} & & C & \CHECK & & \CHECK \\
-\footnotesize{\cite{varoquaux:statistical}} & Pastis & C & & \CHECK & \CHECK\\
-\footnotesize{\cite{bau:three-dimensional}} & & E & & &  \\
-\footnotesize{\cite{umbarger:three-dimensional}} & & E  & & &\\
-\footnotesize{\cite{zhang:inference}} & chromSDE & C &  \CHECK & & \CHECK\\
-\footnotesize{\cite{rousseau:three}} & & E & & \CHECK & \CHECK\\
-\footnotesize{\cite{hu:bayesian}} & Bach & E/C &  & \CHECK & \CHECK\\
-\footnotesize{\cite{kalhor:genome}} & & E &   & &\\
-\footnotesize{\cite{lesne:3d}} & ShRec3D & C  & \CHECK & & \CHECK \\
-\footnotesize{\cite{trieu:large}} & & C & & & \\
-\footnotesize{\cite{trieu:3D}} & & C & &  & \\
-\footnotesize{\cite{trieu:MOGEN}} & MOGEN & C & & & \\
-\footnotesize{\cite{nagano:single-cell}} & & E & & & \\
-\footnotesize{\cite{paulsen:manifold}} & & C & \CHECK & & \CHECK \\
+\scriptsize{\cite{dekker:capturing}} & & C & \CHECK & & \\
+\scriptsize{\cite{duan:three-dimensional}} &  & C & \CHECK & & \CHECK \\
+\scriptsize{\cite{tanizawa:mapping}} & & C & \CHECK & & \\
+\scriptsize{\cite{ay:three-dimensional}} & & C & \CHECK & & \\
+\scriptsize{\cite{ben-elazar:spatial}} & & C & \CHECK & & \CHECK \\
+\scriptsize{\cite{varoquaux:statistical}} & Pastis & C & & \CHECK & \CHECK\\
+\scriptsize{\cite{bau:three-dimensional}} & & E & & &  \\
+\scriptsize{\cite{umbarger:three-dimensional}} & & E  & & &\\
+\scriptsize{\cite{zhang:inference}} & chromSDE & C &  \CHECK & & \CHECK\\
+\scriptsize{\cite{rousseau:three}} & & E & & \CHECK & \CHECK\\
+\scriptsize{\cite{hu:bayesian}} & Bach & E/C &  & \CHECK & \CHECK\\
+\scriptsize{\cite{kalhor:genome}} & & E &   & &\\
+\scriptsize{\cite{lesne:3d}} & ShRec3D & C  & \CHECK & & \CHECK \\
+\scriptsize{\cite{trieu:large}} & & C & & & \\
+\scriptsize{\cite{trieu:3D}} & & C & &  & \\
+\scriptsize{\cite{trieu:MOGEN}} & MOGEN & C & & & \\
+\scriptsize{\cite{nagano:single-cell}} & & E & & & \\
+\scriptsize{\cite{paulsen:manifold}} & & C & \CHECK & & \CHECK \\
 \hline
 \end{tabular}
 \end{center}
@@ -509,7 +493,7 @@ method? (3) or relies on a statistical modeling; (4) is the software
 available or not (to the best of our knowledge).}
 \end{table}
 
-\section*{Modeling DNA as a flexible fibers under constraints}
+\section*{Model-driven approach: modeling DNA as a flexible fibers under constraints}
 
 In the previous section, we discussed how from a contact count map one could
 infer a {\em consensus} model or a population of models that best represented
@@ -526,8 +510,8 @@ the hallmarks of the genome architecture are discovered.
 
 The budding yeast \textit{S. cerivisiae}'s 3D structure has been extensively
 studied, both through 3C-type studies \citep{dekker:capturing,
-duan:three-dimensional, burton:} and through bio-imaging experiments
-\citep{XX}. The small size of its genome, the well-known hallmarks of its
+duan:three-dimensional, burton:species-level} and through bio-imaging experiments
+\citep{berger:high}. The small size of its genome, the well-known hallmarks of its
 genome architecture and the availability of high resolution contact maps and
 FISH data set quickly led several teams to investigate the minimal set of
 constraints needed to reproduce the hallmarks of its genome architecture.
@@ -535,12 +519,12 @@ constraints needed to reproduce the hallmarks of its genome architecture.
 \cite{tjong:physical, tokuda:dynamical, tjong:physical} model {\em S.
 cerevisiae}'s chromosomes as flexible random fibers under a small set of
 constraints. While the exact modeling proposed by the three groups differ, the
-set of constraints are similar: \textit{(i)} the chromosomes are constrained
-into a spherical ball representing the nucleus; \textit{(ii)} centromeres are
-constrained into a spherical ball tethered to the nuclear membrane;
-\textit{(iii)} telomeres are tethered to the nuclear membraine; \textit{(iv)}
-rDNA is constrained into the nucleolus, represented as a spherical ball
-opposite to the centromeres.
+set of constraints can roughly be summarized as: \textit{(i)} the chromosomes
+are constrained into a spherical ball representing the nucleus; \textit{(ii)}
+centromeres are constrained into a spherical ball tethered to the nuclear
+membrane; \textit{(iii)} telomeres are tethered to the nuclear membraine;
+\textit{(iv)} rDNA is constrained into the nucleolus, represented as a
+spherical ball opposite to the centromeres.
 
 Let us take a closer look at the model proposed by \citet{tjong:physical}.
 The 16 chromosomes are modeled as beads-on-a-string spaced 3.2kb apart. The
@@ -569,11 +553,6 @@ x_i}{\|x_{i + 1} - x_i\|} \cdot \frac{x_{i + 2} - x_{i + 1}}{\|x_{i + 2} -
 \end{equation}
 \end{itemize}
 
-In the end, the objective function minimized is the following:
-
-\begin{equation}
-\end{equation}
-
 Using IMP, the authors generate a 25,000 structures, all of which respect the
 constraints listed above. The population of structures is then used to created
 a ``volume-exclusion contact map'', considering that two beads that are less
@@ -584,20 +563,18 @@ In addition, the population of structures also explain FISH experiments
 previously published.
 
 
-\subsection*{\textit{P. falciparum}'s 3D structure cannot be explained by a
-constrained volume exclusion model}
-
-
-Running a similar model on {\em P. falciparum}
-
 \section*{Downstream analysis using 3D models: a highlight of the study of
 {\em P. falciparum}'s 3D structure}
 
-\subsection*{Profiling {\em P. falciparum}'s genome architecture during the
-asexual cycle}
-\label{sec:data}
+In previous section, I have reviewed data-driven methods to infer either
+\textit{consensus} or \textit{ensemble} models of the 3D structure. The reader
+may well ask why go through the effort to obtain such model and not directly
+study the contact maps?  In this section, I will review a number of downstream
+analysis one can do on 3D models, highlighting but limiting myself to results
+on the 3D structure of {\em P. falciparum}.
 
-In the past year, two groups have published novel dataset studying {\em P.
+\subsection{Probing the 3D structure of the {\em P. falciparum}}
+In the past year, two groups have published studies of {\em P.
 falciparum}'s 3D genome architecture using Hi-C. \citet{lemieux:genome-wide}
 studied several strains associated with populations expression unique
 \textit{var} genes, in order to study key folding properties of the 3D
@@ -608,16 +585,60 @@ properties after processing the data as described in
 \citet{ay:three-dimensional} and combining all available libraries for each
 life-cycle stage and strain.
 
-\subsection*{Structure stability}
 
-Both the constrained and unconstained problem stated above are not convex. The
-reader may well ask how sensitive the result is to initialize. In short, it is
-not. To study the stability of the results with respect to the initialization,
-I perform for each stage presented here 1000 optimization, starting from
-different initialization. 
+
+\begin{table}
+\scriptsize
+\centering
+\begin{tabular}{cccccccc}
+\hline
+\multirow{2}{*}{\textbf{Name}} & \multirow{2}{*}{\textbf{Strain}} &
+\multirow{2}{*}{\textbf{Stage}} & \multirow{2}{*}{\textbf{Resolution}} &
+\textbf{Number} & \textbf{Perc} & \textbf{Perc}& \multirow{2}{*}{\textbf{Reference}} \\
+& & & & \textbf{of contacts} & \textbf{of \textit{cis}}& \textbf{of trans}& \\
+\hline
+\hline
+Ay-\textit{rings} & 3D7 & Late Rings & 10~kb & 16711552 & 43\% & 57\% &  \cite{ay:three-dimensional} \\
+Ay-\textit{trophozoites} & 3D7 & Trophozoites &10~kb & 56348498 & 53\% & 47\% & \cite{ay:three-dimensional} \\
+Ay-\textit{schizonts} & 3D7 & Schizonts & 10~kb & 11652832 & 55\% & 45 \% & \cite{ay:three-dimensional} \\
+Lemieux-\textit{A4+} & IT/BC6+ & Rings & 25~kb & 18488252 & 19\% & 81\% & \cite{lemieux:genome-wide} \\
+Lemieux-\textit{A4} & IT/3G8 & Rings &  25~kb & 19674672 & 28\% & 72\% & \cite{lemieux:genome-wide}\\
+Lemieux-\textit{A44} & IT/BC6- & Rings & 25~kb & 18660594 & 25\% & 75\% & \cite{lemieux:genome-wide}\\
+Lemieux-\textit{DCJ\_On} & NF54/DCJ on & Rings & 25~kb & 3098370 & 26\% & 74\% &\cite{lemieux:genome-wide} \\
+Lemieux-\textit{DCJ\_Off} & NF54/DCF Off & Rings & 25~kb & 2533470 & 26\% & 73\% &\cite{lemieux:genome-wide} \\
+Lemieux-\textit{B15C2} & NF54/B15C2 & Rings & 25~kb &  1022996 & 12\% & 88\% & \cite{lemieux:genome-wide}\\
+\hline
+\end{tabular}
+\caption{Summary of the available {\em P. falciparum} Hi-C datasets}
+\end{table}
+
+
+
+\fixme{Add the fact we have time points}
+
+\subsection*{Model evaluation}
+
+A substantial difficulty in modelling the 3D structure of the genome is that
+model evaluation tends to the subjective. What is the relevant measure?
+``Truth'' is generally not fully available, except for a few pairs of loci or
+in simulations. Is validating the colocalization of a pair or a few pairs of
+loci via FISH experiments enough? Is fit to the contact maps or agreements
+between modeling techniques relevant? 
+
+\fixme{Add section on model evaluation}
+
+
+
+\subsection*{Structure stability across time points, clustering and other
+variance analysis \dots}
+
+The reader may well ask how sensitive the result is either initialization or
+how. In short, it is not. To study the stability of the results with respect
+to the initialization, I perform for each stage presented here 1000
+optimization, starting from different initialization. 
 
 The first question that arise is simply: are structures from the same time
-points but from a different start ponit more alike than structures from
+points but from a different start point more alike than structures from
 different time points? To answer this question, I compute for each structure
 and each time point a feature matrix, composed of a subsampled pairwise
 euclidean distances of each structure (so that the resulting feature matrix
@@ -634,25 +655,25 @@ Are the hallmarks of interest conserved across structures of a same stage?
 {\em P. falciparum} folded in very specific ways, with VRSSM genes highly
 interacting. \citet{ay:three-dimensional} also observed strong clustering of
 the centromeres, and enrichment in interaction at the telomeres. These
-observation can lead to a rigourous approach at identifying whether families
+observation can lead to a rigorous approach at identifying whether families
 of loci clustered in the structures and even quantifying this in a rigourous
 manner.
+
+\subsection{Chromatin compaction}
+
+Bau et al
+
 
 \subsection*{3D gene set enrichment}
 
 To assess whether groups of genes are colocolized in a 3D model,
-\citet{ay:three-dimensional} leveraged a statistical method developped by
-\citet{witten:assessment}, which requires labeling each pair of loci in two groups:
-"close" or "far". 
-
-\fixme{This is unclear. Introduce notatinos and rewrite this section}
-
-The authors used varying distance
-thresholds (10\%, 20\% and 40\% of the nuclear diameter) to deem a locus pair
-“close” and labeled all remaining
-pairs in the set as “far”.  The authors then compare the enrichment of loci
-pairs of a group being close and far by resampling loci amongst a same
-chromosome.
+\citet{ay:three-dimensional} leveraged a statistical method developed by
+\citet{witten:assessment}, which requires labeling each pair of loci in two
+groups: "close" or "far".The authors used varying distance thresholds (10\%,
+20\% and 40\% of the nuclear diameter) to deem a locus pair “close” and
+labeled all remaining pairs in the set as “far”.  The authors then compare the
+enrichment of loci pairs of a group being close and far by resampling loci
+among a same chromosome.
 
 This approach dichotomizes loci pairs into two groups, and check for the
 enrichment of a label in one of the two groups. \citep{capurso:distance-based}
@@ -672,39 +693,67 @@ larger than the mean of the null distribution, then it is compared to the
 upper tail of the distribution, and indicates dispersion.
 
 Applying MEPD to the Ring stage, \citet{capurso:distance-based} confirm that
-centromers, telomers, VRSM genes (both overall, subtelomeric and internal)
+centromeres, telomeres, VRSM genes (both overall, subtelomeric and internal)
 colocalize.
 
 
-\begin{table}
-\scriptsize
-\centering
-\begin{tabular}{cccccccc}
-\hline
-\textbf{Name} & \textbf{Strain} & \textbf{Stage} & \textbf{Resolution} &
-\textbf{Number of contacts} & \textbf{Perc. of \textit{cis}} & \textbf{Perc of
-\textit{trans}}& \textbf{Reference} \\
-\hline
-\hline
-Ay-\textit{rings} & 3D7 & Late Rings & 10~kb & 16711552 & 43\% & 57\% &  \cite{ay:three-dimensional} \\
-Ay-\textit{trophozoites} & 3D7 & Trophozoites &10~kb & 56348498 & 53\% & 47\% & \cite{ay:three-dimensional} \\
-Ay-\textit{schizonts} & 3D7 & Schizonts & 10~kb & 11652832 & 55\% & 45 \% & \cite{ay:three-dimensional} \\
-Lemieux-\textit{A4+} & IT/BC6+ & Rings & 25~kb & 18488252 & 19\% & 81\% & \cite{lemieux:genome-wide} \\
-Lemieux-\textit{A4} & IT/3G8 & Rings &  25~kb & 19674672 & 28\% & 72\% & \cite{lemieux:genome-wide}\\
-Lemieux-\textit{A44} & IT/BC6- & Rings & 25~kb & 18660594 & 25\% & 75\% & \cite{lemieux:genome-wide}\\
-Lemieux-\textit{DCJ\_On} & NF54/DCJ on & Rings & 25~kb & 3098370 & 26\% & 74\% &\cite{lemieux:genome-wide} \\
-Lemieux-\textit{DCJ\_Off} & NF54/DCF Off & Rings & 25~kb & 2533470 & 26\% & 73\% &\cite{lemieux:genome-wide} \\
-Lemieux-\textit{B15C2} & NF54/B15C2 & Rings & 25~kb &  1022996 & 12\% & 88\% & \cite{lemieux:genome-wide}\\
-\hline
-\end{tabular}
-\caption{Summary of the available {\em P. falciparum} Hi-C datasets}
-\end{table}
-
 \subsection*{Integrative analysis of gene expression and 3D structure using KernelCCA}
 
+Last but not least, an exciting contribution of \citet{ay:three-dimensional}
+is the integrative analysis of the 3D structure with gene expression using an
+unsupervised learning technique called ``kernel Canonical Correlation
+Analysis'' \citep{bach:kernel}. In this particular case,  KernelCCA aims at
+extracting a set of orthogonal gene expression component that exhibit
+coherence with respect (here) to the 3D structure. It can be helpful to
+think of this procedure as performing a Principal Component Analysis on the
+set of gene expression profiles but such that the component extracted are
+correlated with the gene expression.
 
+Let us take a closer look at how formally kCCA is used in this context.
+Consider the set of $n$ genes $g \in \mathcal{G}$. Each gene $g$ is
+represented on the one hand by its gene expression profile $e(g) \in \RR^{p}$
+and its 3D position $x(g) \in \RR^3$. Assume the set of gene expression
+profiles is mean centered and of unit variance.
+
+The goal of the procedure is to extract a gene expression component $v\in
+\RR^p, \|v\|=1$ such that it is both representative of set of gene expression profile,
+but also correlated with the 3D structure. We thus construct two scores to
+assess those properties. First, define $V(v) = \underset{g \in
+\mathcal{G}}{\sum} (v^T e(g))^2$. $V(v)$ measures the percentage of variance
+explained among the gene expression profile when projected onto the component
+$v$. Note that maximizing this score results in finding the first principal
+component. To assess smoothness along the structure,
+\citet{ay:three-dimensional} leverage a standard approach in kernel methods,
+where the smoothness of a score $f$ is quantified by the function:
+
+\begin{equation}
+S(f) = \frac{f^TK^{-1}_{3D}f}{\|f\|}\,,
+\end{equation}
+
+where $K_3D$ is the Gaussian kernel matrix of the genes' 3D coordinates. The
+smaller $S(f)$, the smoother $f$ is with respect to the 3D structure.
+
+In summary, to obtain smooth gene expression components $v$ on the 3D
+structure representative of the variance amongst all gene expression, one
+needs to: (1) maximize $V(v)$; (2) minimize $S(f)$; (3) maximize the
+correlation between $f$ and $v^T e(g)$. In other word, one would need to solve
+the kernelCCA problem, using on one hand a linear kernel over the gene
+expression profile, while on the other the Gaussian kernel over the 3D
+coordinates of each genes.
+
+\citet{ay:three-dimensional} apply this method on the three model obtained,
+and find highly correlated gene expression profiles with the 3D structure.
+Ranking the genes with their projection onto the gene components,
+\citet{ay:three-dimensional} demonstrate that several gene families and GO
+terms are enriched both close to the telomeres and at the opposite end of the
+nucleus.
+
+
+\section{Discussion}
 
 \section*{Acknowledgments}
+
+
 
 {\it Conflict of Interest}: None declared.
 
