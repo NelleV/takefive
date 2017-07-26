@@ -141,40 +141,43 @@ capacity to evade our immune system. \citet{ay:three-dimensional} assayed the
 3D structure of the genome of the parasite during three key stages of the
 erythrocytic cycle. The relatively small size of the genome yet relatively
 complicated genome architecture, the complex life cycle and the strong link
-between chromatine folding, gene regulation and epigenetic places {\em P.
+between chromatin folding, gene regulation and epigenetic places {\em P.
 falciparum} as an interesting case study for developing new methods for better
 understanding the properties of genome folding and its link to gene
-regulation. An important part of analysing the three-dimensional structure of
-the genome of {\em P. falciparum} (as well as many other organisms) relied on
-the inferring accurate 3D models of the structure. These models were then used
-as a preliminary step to various analysis, such as identifying colocolized
+regulation.
+
+An important part of analyzing the three-dimensional structure of the genome
+of {\em P. falciparum} (as well as many other organisms) relied on the
+inferring accurate 3D models of the structure. These models were then used as
+a preliminary step to various analysis, such as identifying colocalized
 elements, distinguishing between open and closed chromatin and last but not
-least, intergrating with other sources of data, such as gene expression or
-chromatin modification. 
+least, integrating with other sources of data, such as gene expression or
+chromatin modification. In recent years, a profusion of methods were developed
+for creating 3D models of the genome, either as standalone methods or with the
+specific goal to better understand an organism, a biological process (such as
+the inactivation of chromosome X) or the folding of a chromosome. These
+methods broadly fall into two categories: ``model-based'' and ``data-driven''.
+The former methods consider the polymer nature of DNA to leverage the
+theoretical and computational work done in statistical physics of polymers to
+build with as few assumptions as possible many chromosome conformations. Those
+chromosome conformations are then used to compare against experimental data,
+such as Hi-C contact count matrices, in order to iteratively improve the
+models. These models offer mechanistical insights into the folding of DNA. The
+latter approaches use the experimental data to infer 3D models, by typically
+minimizing a cost function ensuring the models are as consistent as possible
+with the data.
 
-\fixme{Add why we are doing a review}
-
-The study of chromosome organization based on contact count maps broadly
-falls into two categories: model-based studies and data-driven studies. The
-former methods consider the polymer nature of DNA to leverage the theoretical
-and computational work done in statistical physics of polymers to build with
-as few assumptions as possible many chromosome conformations. Those chromosome
-conformations are then used to compare against experimental data, such as Hi-C
-contact count matrices, in order to iteratively improve the models. These
-models offer mechanistical insights into the folding of DNA. The latter
-approaches use the experimental data to infer 3D models, by typically minizing
-a cost function ensuring the models are as consistent as possible with the
-data. These data driven models and analysis, with a particular focus on the
-one applied to {\em P. falciparum} are the primary focus of this
-review.
+This paper provides a view on the work accomplished on building and using 3D
+models using contact maps for better understanding of genomic and epigenetic
+processes, with a particular highlight on the {\em P falciparum}. It dwells on
+modeling challenges: why, how and what do 3D models teach us about gene
+regulation? The first and second sections of this paper discuss respectively
+current data- and model-driven methods to build 3D structures of DNA
+using contact maps.  The last section reviews how these models can be used to
+discover the key role of genome architecture in biological process, with a
+particular focus on discoveries on {\em P. falciparum} genome architecture.
 
 % XXX See rosa:computational
-
-Though we here review some of the methods used to study and build models, this
-is a very incomplete view of a blooming field. \citet{rosa:computational}
-provide a more thorough (but again incomplete) overview of computational models
-of genome architectures.
-
 
 \begin{figure}
 \centering
