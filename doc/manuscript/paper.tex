@@ -89,7 +89,7 @@ Malaria is caused by small unicellular protozoan {\em Plasmodium}, infecting
 its host through a mosquito bite. Out of the 5 species that can infect human,
 {\em P. falciparum} is by the far the most deadly with 99\% of the deaths
 associated to it. The parasite has a complex life cycle, with multiple stages
-both in the human and mosquito host. The human host is infected with
+both in the human and mosquito host. \sout{The human host is infected with
 \textit{sporozoites} through the bite of a infected female  {\em Anopheles}
 mosquito. The \textit{sporozoites} quickly migrate to the liver, where they
 start a two weeks multiplication process. They are then released as
@@ -101,7 +101,7 @@ called \textit{schizogony}. The parasite first undergoes multiple rounds of nucl
 replication and division into 13 to 32 daughter cells, until the red blood
 cell bursts and provokes the release of \textit{merezoites} and the infective cycle
 starts anew. This asexual replication cycle is responsible for the symptoms
-and the complications of the disease: anemia, tertian fever, \dots
+and the complications of the disease: anemia, tertian fever, \dots}
 
 While efficacious vaccines still remains a hope and drug resistance to anti
 malaria continues to arise, genomic-based research on malaria seeks new
@@ -215,6 +215,9 @@ $\mathcal{O}(\mathbf{O}, \mathbf{C})$, sometimes under constraints.
 \end{array}
 \end{equation*}
 
+The objective function $\mathcal{O}$, sometimes called the ``scoring
+function''
+
 
 \subsubsection*{Metric MDS-based methods}
 
@@ -283,6 +286,9 @@ relationship & \CHECK &  \CHECK & \CHECK &  & \\
 \cite{tanizawa:mapping} & {\em S. pombe} & Whole-genome &
 FISH-derived relationship & \CHECK & \CHECK & \CHECK & \CHECK &  \\
 \cite{ay:three-dimensional} & {\em P. falciparum} & Whole-genome & Fractal
+globule derived relationship & \CHECK  & & &
+& $\frac{1}{\delta_{ij}^2}$ \\
+\cite{peng:sequencing} & {\em P. falciparum} & Whole-genome & Fractal
 globule derived relationship & \CHECK  & & &
  & $\frac{1}{\delta_{ij}^2}$ \\
 \cite{lesne:3d} & & Whole-genome & \textit{ad hoc} & & & & & \
@@ -474,6 +480,7 @@ count matrix. Applying classical MDS on this low rank PSD matrix then yields a
 \scriptsize{\cite{bau:three-dimensional}} & & E & & &  \\
 \scriptsize{\cite{umbarger:three-dimensional}} & & E  & & &\\
 \scriptsize{\cite{zhang:inference}} & chromSDE & C &  \CHECK & & \CHECK\\
+\scriptsize{\cite{peng:sequencing}} & autochrom3D & C &  \CHECK & & \CHECK\\
 \scriptsize{\cite{rousseau:three}} & & E & & \CHECK & \CHECK\\
 \scriptsize{\cite{hu:bayesian}} & Bach & E/C &  & \CHECK & \CHECK\\
 \scriptsize{\cite{kalhor:genome}} & & E &   & &\\
