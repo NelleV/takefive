@@ -9,5 +9,5 @@ done;
 
 python clustering_across_stages_downsampled_distances.py
 python clustering_across_stages_downsampled_distances.py -a UNB0
-
+python clustering_across_stages_downsampled_distances.py -a PO
 

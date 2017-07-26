@@ -134,8 +134,11 @@ except OSError:
     pass
 if args.chromosome is None:
     outfile = "images/pca_downsampled_distances_%s.png" % algorithm
+    outfile = "images/pca_downsampled_distances_%s.pdf" % algorithm
 else:
     outfile = "images/pca_downsampled_distances_%s_chr%02d.png" % (
+        algorithm, args.chromosome)
+    outfile = "images/pca_downsampled_distances_%s_chr%02d.pdf" % (
         algorithm, args.chromosome)
 
 fig.savefig(outfile)

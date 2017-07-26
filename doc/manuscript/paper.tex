@@ -65,7 +65,8 @@
 \begin{document}
 
 % Title of paper
-\title{Analysing the three-dimensional structure of {\em P. falciparum}}
+\title{The art of modelling the 3D structure of the genome\\
+  Insights in {\em P. falciparum} genome organization}
 \author{Nelle Varoquaux}
 
 %\maketitle
@@ -112,10 +113,11 @@ of {\em P. falciparum} through the different stages of its life is thought to
 be driven by coordinated changes in gene expression, the relative paucity of
 transcription factors points to unusual gene regulatory mechanisms. Meanwhile,
 the relative abundance of proteins related to chromatin structures, mRNA decay
-and translation rates suggests alternative mechanisms of gene regulation at the
-epigenetic and post-translational levels
-\citep{cui:chromatin-mediated, duffy:role, hoeijmakers:placing,
-horrocks:control, deitsch:mechanisms}.
+and translation rates suggests alternative mechanisms of gene regulation at
+the epigenetic and post-translational levels \citep{cui:chromatin-mediated,
+duffy:role, hoeijmakers:placing, horrocks:control, deitsch:mechanisms}. Thus,
+a better understanding of genome architecture of {\em P. falciparum}, both at
+a local and global scale may provide new leads for developing new therapies.
 
 In recent year, chromosome conformation captures-like method, broadly referred
 to as Hi-C allowed to identify physical interactions between two regions in a
@@ -126,28 +128,31 @@ understanding of the relations between 3D structure and gene regulation,
 replication timing, epigenetic changes as well as many other biological
 processes. The 3D genome of a wide variety of organisms has been studied in
 the past year, including many species of yeasts \citep{duan:three-dimensional,
-burton:species-level, mizuguchi:cohesin-dependant}, bacteria
+burton:species-level, mizuguchi:cohesin-dependent}, bacteria
 \citep{umbarger:three-dimensional}, flies \citep{sexton:three-dimensional},
 plants \citep{feng:genome-wide, wang:genome-wide} and numerous human and mouse
-cell lines \citep{lieberman-aiden:comprehensive, rao:3D}.
-
-Within the past few years, two studies of the three-dimensional structure of
-{\em P. falciparum} have been released.  \citet{lemieux:genome-wide} probed
-several strains of {\em P. falciparum} to understand the link between 3D
-structure and the complex regulation of \textit{var} genes, a family of genes
-involved the invasion of red blood cell and also responsible for the
-parasite's great capacity to evade our immune system.
-\citet{ay:three-dimensional} assayed the 3D structure of the genome of the
-parasite during three key stages of the erythrocytic cycle.
-\citet{ay:multiple} reviews the key biological findings of those studies.
-
-An important part of analysing the three-dimensional structure of the
-genome of {\em P. falciparum} (as well as many other organisms) relied on the
-inferring accurate 3D models of the structure. These models were then used as
-a preliminary step to various analysis, such as identifying colocolized
+cell lines \citep{lieberman-aiden:comprehensive, rao:3D}. Within the past few
+years, two studies of the three-dimensional structure of {\em P. falciparum}
+have been released.  \citet{lemieux:genome-wide} probed several strains of
+{\em P. falciparum} to understand the link between 3D structure and the
+complex regulation of \textit{var} genes, a family of genes involved the
+invasion of red blood cell and also responsible for the parasite's great
+capacity to evade our immune system. \citet{ay:three-dimensional} assayed the
+3D structure of the genome of the parasite during three key stages of the
+erythrocytic cycle. The relatively small size of the genome yet relatively
+complicated genome architecture, the complex life cycle and the strong link
+between chromatine folding, gene regulation and epigenetic places {\em P.
+falciparum} as an interesting case study for developing new methods for better
+understanding the properties of genome folding and its link to gene
+regulation. An important part of analysing the three-dimensional structure of
+the genome of {\em P. falciparum} (as well as many other organisms) relied on
+the inferring accurate 3D models of the structure. These models were then used
+as a preliminary step to various analysis, such as identifying colocolized
 elements, distinguishing between open and closed chromatin and last but not
 least, intergrating with other sources of data, such as gene expression or
 chromatin modification. 
+
+\fixme{Add why we are doing a review}
 
 The study of chromosome organization based on contact count maps broadly
 falls into two categories: model-based studies and data-driven studies. The
@@ -171,19 +176,30 @@ provide a more thorough (but again incomplete) overview of computational models
 of genome architectures.
 
 
+\begin{figure}
+\centering
+\includegraphics[width=0.5\linewidth]{schemas/schema.pdf}
+\caption{The art of understanding 3D genome structure}{
+\fixme{write caption}}
+\label{Fig1}
+\end{figure}
+
+
 \section*{Three-dimensional models of DNA from Hi-C data}
 
 The development of genowe-wide and high-throughput protocols to probe samples
 for their 3D genome architecture naturally paved the way to systematic and in
-depth study of the folding mechanisms of DNA. 
-
-Over the past 10 years, the challenge of building 3D models from contact maps
-have been tackled by a plethora of methods. These model chromosomes as a
+depth study of the folding mechanisms of DNA. Over the past 10 years, the
+challenge of building 3D models from contact maps have been tackled by a
+plethora of methods, some developped for a particular organisms, others with
+the hope to be generalizable to any data sets. Methods model chromosomes as a
 series of beads, and attempt to place the beads in a 3D euclidean space to
 well represent the contact map. ``data-driven'' methods broadly fall into two
 categories: (i) \textit{consensus} approaches, that aim at inferring a unique
 mean structures best representing the contact count data; (ii)
 \textit{ensemble} methods that yield a population of structures.
+
+\fixme{contrast model-driven studies with data-driven studies}
 
 Both consensus and ensemble methods have benefits and drawbacks. Ensemble
 approaches are more biologically accurate: Hi-C data are derived from a
@@ -201,6 +217,16 @@ visualization and analysis, this average structure can be easily integrated
 with other sources of data, such as RNA-seq, chip-seq etc, which are also
 population-based.
 
+
+\begin{figure}
+\centering
+\includegraphics[width=0.7\linewidth]{figures/counts_maps.png}
+\caption{Contact maps of {\em P. falciparum}'s chr7}{
+\fixme{write caption}
+\textbf{A.} \citep{lemieux:genome-wide}}
+\label{Fig1}
+\end{figure}
+
 \subsection*{Consensus models}
 
 Consensus methods aim at inferring a model $\mathbf{X} \in \RR^{3 \times n}$
@@ -216,8 +242,10 @@ $\mathcal{O}(\mathbf{O}, \mathbf{C})$, sometimes under constraints.
 \end{equation*}
 
 The objective function $\mathcal{O}$, sometimes called the ``scoring
-function''
-
+function'', can be derived from known embedding algorithms (such as
+multidimensional-scaling methods), from statistical modeling of contact
+counts, or simply constructed in an \textit{ad hoc} manner to fulfill a set of
+wished properties.
 
 \subsubsection*{Metric MDS-based methods}
 
@@ -246,7 +274,8 @@ cerevisiae}'s chromosome III as a Worm-like chain polymer,
 and wish distances, \citet{ay:three-dimensional} relies on the biophysical
 properties of fractal globule polymers, \citet{tanizawa:mapping} inferred the
 count-to-distance mapping by fitting the relationship using known pairwise
-distances obtained through high-resolution FISH measures. 
+distances obtained through high-resolution FISH measures. In brief, there are
+as many ways to derive the count-to-distance mapping as there are of studies.
 
 \citet{lesne:3d} proposes a different approach to convert counts into
 distances: they borrow the concept of shortest path from graph theory to
@@ -392,7 +421,8 @@ inference of 3D models as maximizing the likelihood:
 \texttt{Pastis} can automatically adjust the parameters $\beta$, $\alpha$ of
 the counts-to-distance transfer function and infer a genome structure that
 best explains the observed data. The strength of this methods comes from the
-robustness to low signal-to-noise ratio.
+robustness to low signal-to-noise ratio, through a direct modeling of the
+noise through the statistical model.
 
 \fixme{add results on the P. falciparum to show pastis's results on 
 super noisy data}
@@ -448,15 +478,15 @@ differently by two groups.
 
 Akin to {\em consensus} MDS-like method and {\em ensemble}-local minima
 methods,  the first approach is to consider each contact as a constraint and
-to formulate
-an under constrained optimization problem. A population of structures
-satistifying the constraints can be found by sampling local minimas.
+to formulate an under constrained optimization problem. A population of
+structures satistifying the constraints can be found by sampling local
+minimas.
 
 \citet{paulsen:manifold} proposes a very different method, and formulate a
 \textit{manifold based optimization}, where a low rank PSD matrix (and thus a
 distance matrix) is optimized to be as close as possible to the sparse contact
 count matrix. Applying classical MDS on this low rank PSD matrix then yields a
-3D model of the genome.
+\textit{consensus} 3D model of the genome.
 
 \begin{table}[ht!]
 \begin{center}
@@ -502,15 +532,12 @@ available or not (to the best of our knowledge).}
 
 \section*{Model-driven approach: modeling DNA as a flexible fibers under constraints}
 
-In the previous section, we discussed how from a contact count map one could
-infer a {\em consensus} model or a population of models that best represented
-the contact map. Another set of methods approach the problem of finding 3D
-models of genome architecture very differently. Instead of using data-driven
-approaches, these methods model chromosomes as series of beads or flexible
-fibers, and attempt to find the smallest set of constraints such that a
-generated contact maps from these models match as closely as possible the
-observed contact maps. As these models refine the constraints, more insight on
-the hallmarks of the genome architecture are discovered.
+``data-driven'' methods, as presented in the last section, use the
+experimental contact maps to infer models as consistent as possible with the
+data. Another approach consists in modeling chromosomes as polymers under a
+small number constraints such that a generated contact maps from these models
+match as closely as possible the observed contact maps. These ``model-driven''
+approaches offer mechanistical insights into the genome architecture.
 
 
 \subsection*{A small set of constraints explain the 3D architecture of \textit{S. cerevisiae}}
