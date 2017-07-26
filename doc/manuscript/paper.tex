@@ -90,8 +90,13 @@ Malaria is caused by small unicellular protozoan {\em Plasmodium}, infecting
 its host through a mosquito bite. Out of the 5 species that can infect human,
 {\em P. falciparum} is by the far the most deadly with 99\% of the deaths
 associated to it. The parasite has a complex life cycle, with multiple stages
-both in the human and mosquito host. \sout{The human host is infected with
-\textit{sporozoites} through the bite of a infected female  {\em Anopheles}
+both in the human and mosquito host.
+
+
+\begin{figure}
+\caption{The life cycle of {\em P. falciparum}}{
+\small
+The human host is infected by \textit{sporozoites} through the bite of a infected female  {\em Anopheles}
 mosquito. The \textit{sporozoites} quickly migrate to the liver, where they
 start a two weeks multiplication process. They are then released as
 \textit{merozoites} in the bloodstream and proceed to infect red blood cells. The
@@ -103,6 +108,7 @@ replication and division into 13 to 32 daughter cells, until the red blood
 cell bursts and provokes the release of \textit{merezoites} and the infective cycle
 starts anew. This asexual replication cycle is responsible for the symptoms
 and the complications of the disease: anemia, tertian fever, \dots}
+\end{figure}
 
 While efficacious vaccines still remains a hope and drug resistance to anti
 malaria continues to arise, genomic-based research on malaria seeks new
@@ -115,7 +121,7 @@ transcription factors points to unusual gene regulatory mechanisms. Meanwhile,
 the relative abundance of proteins related to chromatin structures, mRNA decay
 and translation rates suggests alternative mechanisms of gene regulation at
 the epigenetic and post-translational levels \citep{cui:chromatin-mediated,
-duffy:role, hoeijmakers:placing, horrocks:control, deitsch:mechanisms}. Thus,
+duffy:role, hoeijmakers:placing, horrocks:control, deitsch:mechanisms}:
 a better understanding of genome architecture of {\em P. falciparum}, both at
 a local and global scale may provide new leads for developing new therapies.
 
@@ -201,8 +207,6 @@ well represent the contact map. ``data-driven'' methods broadly fall into two
 categories: (i) \textit{consensus} approaches, that aim at inferring a unique
 mean structures best representing the contact count data; (ii)
 \textit{ensemble} methods that yield a population of structures.
-
-\fixme{contrast model-driven studies with data-driven studies}
 
 Both consensus and ensemble methods have benefits and drawbacks. Ensemble
 approaches are more biologically accurate: Hi-C data are derived from a
@@ -291,7 +295,8 @@ counts do not contribute much to the wish-distances; (ii) the resulting
 wish-distances form a distance matrix, and thus an optimal solution to the MDS
 can be found.
 
-In addition of having subtle differences in the derivation of wish distances,
+In addition of having subtle differences in the derivation of wish distances
+(which can have important effects on the resulting structures),
 the different methods also vary by the inclusion of weights to reflect
 confidence in ``wish-distances'' \citep{ay:three-dimensional}, or constraints
 to reflect prior knowledge on the structure. Table~\ref{table:mds_detail}
@@ -472,12 +477,13 @@ be accomplished by selecting the maximum a posteriori.
 
 The last category of data-driven methods to infer the 3D architecture of the
 genome rely on a new protocol to probe single-cell for their 3D structures
-\citep{nagano:single-cell,ramani:massively}. Single-cell Hi-C is still in its early days,
-and only a handful of data sets are today publicly available. The contact maps
-originating from these data sets are very sparse, and specific methods to
-infer 3D structures need to be developed specifically for sc-HiC. The
-challenge of constructing models from this data has been tackled very
-differently by two groups. 
+\citep{nagano:single-cell,ramani:massively}. Single-cell Hi-C is still in its
+early days, and, despite potential for assessing the variability of
+cell-to-cell genome architecture in a genome-wide fashion, only a handful of
+data sets are today publicly available. The contact maps originating from
+these data sets are very sparse, and specific methods to infer 3D structures
+need to be developed specifically for sc-HiC. Two methods have been developed
+to tackle the challenging task of constructing models from this data.
 
 Akin to {\em consensus} MDS-like method and {\em ensemble}-local minima
 methods,  the first approach is to consider each contact as a constraint and
@@ -526,7 +532,7 @@ count matrix. Applying classical MDS on this low rank PSD matrix then yields a
 \hline
 \end{tabular}
 \end{center}
-\caption{\bf A comparison of 3D inference methods}{In this table, we summarize
+\caption{\bf A comparison of 3D inference methods}{\small In this table, we summarize
 properties of published methods to infer the 3D structure of the genome: (1)
 is it a consensus or a ensemble based inference? (2) Is it an MDS based
 method? (3) or relies on a statistical modeling; (4) is the software
@@ -559,36 +565,10 @@ constraints. While the exact modeling proposed by the three groups differ, the
 set of constraints can roughly be summarized as: \textit{(i)} the chromosomes
 are constrained into a spherical ball representing the nucleus; \textit{(ii)}
 centromeres are constrained into a spherical ball tethered to the nuclear
-membrane; \textit{(iii)} telomeres are tethered to the nuclear membraine;
+membrane; \textit{(iii)} telomeres are tethered to the nuclear membrane;
 \textit{(iv)} rDNA is constrained into the nucleolus, represented as a
-spherical ball opposite to the centromeres.
+spherical ball opposite to the centromeres. A scoring function eng
 
-Let us take a closer look at the model proposed by \citet{tjong:physical}.
-The 16 chromosomes are modeled as beads-on-a-string spaced 3.2kb apart. The
-authors cast an optimization problem including the following restraints: 
-
-\begin{itemize}
-\item \textbf{Adjacent Beads Constraints} Two adjacent beads spaced 3.2kb
-apart are constrained to be 30~nm apart;
-\item \textbf{Volume Exclusion Constraints} Each pairs of beads are spaced at
-minimum $30~nm$ apart;
-\item \textbf{Nucleus Constraint} All beads lie in a spherical nucleus of
-radius $1\mu m$
-\item \textbf{Centromeres Constraints} Centromeres are localized in a small sphere of
-50nm abutting the nuclear envelop.
-\item \textbf{Telomere Constraints} Telomeres are located at most 50nm from the nuclear envelop.
-\item \textbf{rDNA restraint} The repeated rDNA located on chromosome 12 is
-constrained to be inside the nucleolus;
-\item \textbf{Nucleolus exclusion restraint} All beads that isn't rDNA is
-constrained outside of the nucleolus;
-\item \textbf{Chain stiffness}: an angular restraint is imposed on three
-consecutive beads to reproduce chain stiffness:
-\begin{equation}
-\frac{1}{2} k_{\text{angle}} \sum^{N - 2}_{i = 1} \left( 1 - \frac{x_{i + 1} -
-x_i}{\|x_{i + 1} - x_i\|} \cdot \frac{x_{i + 2} - x_{i + 1}}{\|x_{i + 2} -
-  x_{i + 1}\|} \right)^2\,,
-\end{equation}
-\end{itemize}
 
 Using IMP, the authors generate a 25,000 structures, all of which respect the
 constraints listed above. The population of structures is then used to created
