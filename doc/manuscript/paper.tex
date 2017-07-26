@@ -539,6 +539,15 @@ method? (3) or relies on a statistical modeling; (4) is the software
 available or not (to the best of our knowledge).}
 \end{table}
 
+\subsection*{Model evaluation}
+
+A substantial difficulty in modeling the 3D structure of the genome is that
+model evaluation tends to the subjective. What is the relevant measure?
+``Truth'' is generally not fully available, except for a few pairs of loci or
+in simulations. Is validating the colocalization of a pair or a few pairs of
+loci via FISH experiments enough? Is fit to the contact maps or agreements
+between modeling techniques relevant? 
+
 \section*{Model-driven approach: modeling DNA as a flexible fibers under constraints}
 
 ``data-driven'' methods, as presented in the last section, use the
@@ -583,25 +592,6 @@ previously published.
 \section*{Downstream analysis using 3D models: a highlight of the study of
 {\em P. falciparum}'s 3D structure}
 
-In previous section, I have reviewed data-driven methods to infer either
-\textit{consensus} or \textit{ensemble} models of the 3D structure. The reader
-may well ask why go through the effort to obtain such model and not directly
-study the contact maps?  In this section, I will review a number of downstream
-analysis one can do on 3D models, highlighting but limiting myself to results
-on the 3D structure of {\em P. falciparum}.
-
-\subsection{Probing the 3D structure of the {\em P. falciparum}}
-In the past year, two groups have published studies of {\em P.
-falciparum}'s 3D genome architecture using Hi-C. \citet{lemieux:genome-wide}
-studied several strains associated with populations expression unique
-\textit{var} genes, in order to study key folding properties of the 3D
-structure relating to \textit{var} gene expression. On the other hand,
-\citet{ay:three-dimensional} focus three key time-point of the development
-cycle. Table~\ref{tab:data} summarizes the available data sets and their key
-properties after processing the data as described in
-\citet{ay:three-dimensional} and combining all available libraries for each
-life-cycle stage and strain.
-
 
 
 \begin{table}
@@ -631,20 +621,12 @@ Lemieux-\textit{B15C2} & NF54/B15C2 & Rings & 25~kb &  1022996 & 12\% & 88\% & \
 
 
 
-\fixme{Add the fact we have time points}
-
-\subsection*{Model evaluation}
-
-A substantial difficulty in modelling the 3D structure of the genome is that
-model evaluation tends to the subjective. What is the relevant measure?
-``Truth'' is generally not fully available, except for a few pairs of loci or
-in simulations. Is validating the colocalization of a pair or a few pairs of
-loci via FISH experiments enough? Is fit to the contact maps or agreements
-between modeling techniques relevant? 
-
-\fixme{Add section on model evaluation}
-
-
+In previous section, I have reviewed data-driven methods to infer either
+\textit{consensus} or \textit{ensemble} models of the 3D structure. The reader
+may well ask why go through the effort to obtain such model and not directly
+study the contact maps?  \fixme{why?}In this section, I will review a number of downstream
+analysis one can do on 3D models, highlighting but not limiting myself to results
+on the 3D structure of {\em P. falciparum}. \fixme{why}
 
 \subsection*{Structure stability across time points, clustering and other
 variance analysis \dots}
@@ -768,6 +750,23 @@ nucleus.
 
 
 \section*{Discussion}
+
+data-driven Plethora of methods, but only handfull that can be used on different
+organisms and have been validated on simulated data set. Ensemble methods are
+more challenging to use, to validate and to explore, but offer more
+biologically accurate view of what is going on in teh nucleus. Overall,
+powerfull tool but that still needs to be extended oto work on challenging
+data set. 
+
+model-driven methods are organisms and study specific. For each data set, the
+set of constraints need to be revisited. Yet, once built, they can be used ot
+replace high throughput FISH experiments at low cost.
+
+Downstream analysis gave important insights in the relation between gene
+regulation and genome architecture of teh {\em P. falciparum}. Yet a lot
+remains to be done. How to compare in a meaningful manner structures from
+different time points at a genome-scale level? 
+
 
 \section*{Acknowledgments}
 
