@@ -1,6 +1,6 @@
-%\documentclass[2columns]{article}
+\documentclass[2columns]{article}
 
-\documentclass[letterpaper,12pt]{article}
+%\documentclass[letterpaper,12pt]{article}
 \usepackage{url}
 \usepackage{graphicx}
 \usepackage{url}
@@ -33,7 +33,7 @@
 %% This is the recommended preamble for your document.
 
 %% Load De Gruyter specific settings 
-\usepackage{dgjournal}          
+%\usepackage{dgjournal}          
 
 %% The mathptmx package is recommended for Times compatible math symbols.
 %% Use mtpro2 or mathtime instead of mathptmx if you have the commercially
@@ -65,14 +65,33 @@
 \begin{document}
 
 % Title of paper
-\title{The art of modelling the 3D structure of the genome\\
-  Insights in {\em P. falciparum} genome organization}
+\title{Unfolding the genome's 3D architecture:\\
+  \Large{Insights in {\em P. falciparum} genome organization}}
 \author{Nelle Varoquaux}
 
-%\maketitle
+\maketitle
 
 
 \begin{abstract}
+\begin{itemize}
+
+\item {\em P. falciparum} is the deadliest parasite causing human malaria,
+responsible for more than 500,000 death in 2015. Our lack of understanding of
+the parasite gene regulation of its complex life cycle is an impediment to the
+development of novel therapies. Recent evidence points towards unusual means
+of gene regulation, possible through changes in its genome architecture. A
+better understanding of how DNA folds into the nucleus and how it influences
+gene expression could provide new leads for developing new drugs.
+\item In the meantime, the development of new means to probe samples for the
+three-dimensional structure of DNA paves the way for in depth and systematic analysis of genome
+architecture, offering new insights in many biological processes. 3C-like
+methods can now assess physical interactions between pairs of loci in a
+genome-wide fashion, thus leading to the creation of contact maps. The
+democratization of such protocols creates many new opportunities for
+methodological development: how to infer 3D models from these contact maps?
+Can such models help us gain insights in biological process?
+\item Here, I review recent methodological developments \fixme{finish this} 
+\end{itemize}
 
 \end{abstract}
 
@@ -110,7 +129,7 @@ starts anew. This asexual replication cycle is responsible for the symptoms
 and the complications of the disease: anemia, tertian fever, \dots}
 \end{figure}
 
-While efficacious vaccines still remains a hope and drug resistance to anti
+While safe and effictive vaccines still remains a hope and drug resistance to anti
 malaria continues to arise, genomic-based research on malaria seeks new
 avenues for developing novel therapies \citep{kirchner:recent}. One of the
 limiting factors of developments of new drugs is our poor understanding of the
@@ -188,19 +207,18 @@ particular focus on discoveries on {\em P. falciparum} genome architecture.
 \begin{figure}
 \centering
 \includegraphics[width=0.5\linewidth]{schemas/schema.pdf}
-\caption{The art of understanding 3D genome structure}{
-\fixme{write caption}}
+\caption{The art of understanding 3D genome structure}
 \label{Fig1}
 \end{figure}
 
 
 \section*{Three-dimensional models of DNA from Hi-C data}
 
-The development of genowe-wide and high-throughput protocols to probe samples
+The development of genome-wide and high-throughput protocols to probe samples
 for their 3D genome architecture naturally paved the way to systematic and in
 depth study of the folding mechanisms of DNA. Over the past 10 years, the
 challenge of building 3D models from contact maps have been tackled by a
-plethora of methods, some developped for a particular organisms, others with
+plethora of methods, some developed for a particular organisms, others with
 the hope to be generalizable to any data sets. Methods model chromosomes as a
 series of beads, and attempt to place the beads in a 3D euclidean space to
 well represent the contact map. ``data-driven'' methods broadly fall into two
@@ -226,12 +244,16 @@ population-based.
 
 
 \begin{figure}
-\centering
+\begin{center}
 \includegraphics[width=0.7\linewidth]{figures/counts_maps.png}
-\caption{Contact maps of {\em P. falciparum}'s chr7}{
-\fixme{write caption}
-\textbf{A.} \citep{lemieux:genome-wide}}
-\label{Fig1}
+\end{center}
+\caption{Contact maps of {\em P. falciparum}'s chr7}{ \small Both contact maps show
+enrichment of contact counts in VRSSM clusters (\textbf{A.} Ring stage 
+\citep{lemieux:genome-wide} of IT strains, \textbf{B.} 
+Trophozoite stage of 3D7 \citep{ay:three-dimensional}) 
+Dark blue corresponds to high interactions, light yellow to low interactions.
+The strong diagonal reflects the proximity of adjacent regions of the genome.
+The black line indicates the centromeres. }
 \end{figure}
 
 \subsection*{Consensus models}
@@ -350,7 +372,7 @@ inference as a \emph{non-metric MDS} \citep{kruskal:multidimensional}, where
 the 3D structure is inferred jointly with the wish-distances. Another idea is
 to parametrize the count-to-distance mapping as a power-law ($d = \beta
 c^\alpha)$, and to infer jointly the parameters jointly with the structure
-\citet{zhang:inference}.
+\citep{zhang:inference}.
 
 \subsubsection*{Other ad-hoc optimization methods}
 
@@ -430,12 +452,21 @@ inference of 3D models as maximizing the likelihood:
 the counts-to-distance transfer function and infer a genome structure that
 best explains the observed data. The strength of this methods comes from the
 robustness to low signal-to-noise ratio, through a direct modeling of the
-noise through the statistical model.
+noise through the statistical model (See figure~\ref{fig:3D_structures}.
 
-\fixme{add results on the P. falciparum to show pastis's results on 
-super noisy data}
+\begin{figure}
+\includegraphics[width=\linewidth]{schemas/3D_structures.pdf}
+\label{fig:3D_structures}
+\caption{3D models of {\em P. falciparum}'s genome architecture}{Using
+\texttt{pastis-MDS} (\textbf{A} and \textbf{B}) and \texttt{pastis-PO}
+(\textbf{C} and \textbf{D}) on two
+HiC data set of {\em P. falciparum}. Each color corresponds to a chromosome.
+Large white beads mark centromeres, small blue beads telomeres and green beads
+VRSSM clusters. Centromeric cluster is marked with a black line, telomeric
+cluster is marked with a dashed line.}
+\end{figure}
 
-\subsection*{Ensemble methods}
+\subsection*{Ensemble methods as a mean to infer population of structures}
 
 {\em Ensemble approaches} aim at inferring a population of structures
 representative of the contact count map. The methods fall into two distinct
@@ -453,11 +484,11 @@ and the second with {\em Consensus} statistical based methods.
 chromosomes as a series of beads, linked by restraining oscillators. These
 oscillators can be thought of as a ``force'' between beads so that they come
 into contact or ensure a minimal or maximal distance between those. The models
-includes three differente types of restraints: (i) beads seen interacting are
+includes three different types of restraints: (i) beads seen interacting are
 restrained with harmonic oscillators of strengths derived from the contact
 counts; (ii) adjacent beads are ensured to be neither too close nor too far
 from one another; (iii) the last oscillators are activated only when
-constraints are not fulfilled to XXX.  This yields an optimization problem
+constraints are not fulfilled to \todo{XXX}.  This yields an optimization problem
 with a large number of local minima, which the authors sample from by running
 50,000 minimizations starting from random starts.
 
@@ -576,17 +607,36 @@ are constrained into a spherical ball representing the nucleus; \textit{(ii)}
 centromeres are constrained into a spherical ball tethered to the nuclear
 membrane; \textit{(iii)} telomeres are tethered to the nuclear membrane;
 \textit{(iv)} rDNA is constrained into the nucleolus, represented as a
-spherical ball opposite to the centromeres. A scoring function eng
+spherical ball opposite to the centromeres. One can then simulate a large set
+of random structures fulfilling the constraints, and generate a
+``volume-exclusion contact map'' from this population of structures,
+considering that two beads that are less then 45~nm apart in any of the
+structures form a contact. The Pearson correlation of the volume-exclusion
+contact map and the Hi-C one are highly correlated, demonstrating this small
+set of constraints fully explain the observed counts. In addition, the
+population of structures also explain FISH experiments previously published.
+
+\subsection*{Volume-exclusion modeling cannot explain {\em P. falciparum}'s
+genome architecture}
+
+For at least some stages, {\em P. falciparum} share a lot of common genomic
+architecture hallmarks with the budding yeast: the centromeres are strongly
+co-localized at one end of the nucleus, telomeres are in physical contacts,
+\dots So could the primary architectural features also arise from a population
+of constrained but otherwise random of structures? Adapting the set of
+constraints to match biological knowledge of {\em P. falciparum},
+\citet{ay:three-dimensional} showed the resulting simulated VE map not only
+yielded lower correlations, but also did not show the same features as the
+original contact count matrix. In particular, the VRSM genes which display
+domain-like enrichment in interactions did not appear in the simulated VE map
+(See Figure~\ref{fig:ve_modeling})
+
+\begin{figure}
+\caption{Volume Exclusion Modeling}{}
+\label{fig_ve_modeling}
+\end{figure}
 
 
-Using IMP, the authors generate a 25,000 structures, all of which respect the
-constraints listed above. The population of structures is then used to created
-a ``volume-exclusion contact map'', considering that two beads that are less
-then 45~nm apart from a contact. The Pearson correlation of the
-volume-exclusion contact map and the Hi-C one are highly correlated,
-demonstrating this small set of constraints fully explain the observed counts.
-In addition, the population of structures also explain FISH experiments
-previously published.
 
 
 \section*{Downstream analysis using 3D models: a highlight of the study of
@@ -647,21 +697,38 @@ results clearly show that structures from the same time point cluster
 strongly. Repeating this experiment on singly chromosomes yields the same
 result.
 
-The second question one can ask is how do the structures differ. Tackling this
-question is very challenging, but can be reformulated in a much easier way.
-Are the hallmarks of interest conserved across structures of a same stage?
-\citet{ay:three-dimensional} and \citet{lemieux:genome-wide} both identified
-{\em P. falciparum} folded in very specific ways, with VRSSM genes highly
-interacting. \citet{ay:three-dimensional} also observed strong clustering of
-the centromeres, and enrichment in interaction at the telomeres. These
-observation can lead to a rigorous approach at identifying whether families
-of loci clustered in the structures and even quantifying this in a rigourous
-manner.
+The second question is: ``are models locally consistent''
+\citep{bau:three-dimensional}. A possible answer to this questions is to
+divide the structures into overlapping sub-structures ranging from 5 to 20
+beads, and compute the pairwise RMSD across all structures. Segments
+overlapping within a certain range for a large number of models can be
+assessed as locally consistent, while others labelled as highly variable.
 
-\subsection*{Chromatin compaction}
+The last question one can ask is: ``how do the structures differ?'' . Tackling
+this question is very challenging, but can be reformulated in a much easier
+way. Are the hallmarks of interest conserved across structures of a same
+stage? \citet{ay:three-dimensional} and \citet{lemieux:genome-wide} both
+identified {\em P. falciparum} folded in very specific ways, with VRSSM genes
+highly interacting. \citet{ay:three-dimensional} also observed strong
+clustering of the centromeres, and enrichment in interaction at the telomeres.
+These observation can lead to a rigorous approach at identifying whether
+families of loci clustered in the structures and even quantifying this in a
+rigourous manner.
 
-Bau et al
+\subsection*{Chromatin compaction and chromosome entanglement}
 
+3D models can be used to estimated chromatin compaction and chromosome
+entanglement. The former can be estimated by looking at the number of base
+pairs in a region defined either by volume if the scale of the structure is
+known, or by a percentage of the size of the structure
+\citep{bau:three-dimensional}. Another idea is to sample random beads of a
+certain diameter, and assess how many loci are seen interacting. Applying this
+method on the 3 models of {\em P. falciparum}, \citet{ay:three-dimensional}
+showed the trophozoite stage exhibited a more open chromatin than the ring and
+schizont stage, coherent with the transcriptionally active state of the
+parazite during this moment of the life cycle. A similar analysis, but
+counting the number of inter-chromosomal interaction can help assess the
+chromosome entanglement of the structure.
 
 \subsection*{3D gene set enrichment}
 
@@ -747,26 +814,34 @@ Ranking the genes with their projection onto the gene components,
 terms are enriched both close to the telomeres and at the opposite end of the
 nucleus.
 
-
-
 \section*{Discussion}
 
-data-driven Plethora of methods, but only handfull that can be used on different
-organisms and have been validated on simulated data set. Ensemble methods are
-more challenging to use, to validate and to explore, but offer more
-biologically accurate view of what is going on in teh nucleus. Overall,
-powerfull tool but that still needs to be extended oto work on challenging
-data set. 
+Plethora of methods for inferring 3D models from contact maps have been
+developed: some are very specific to an organism or a region of the genome,
+while others are generalizable easily to many organisms. As 3C-type method are
+democratized, a wider audience of researchers are in need of robust and
+well-implemented algorithms for building models. Surprisingly, only a handfull
+of methods are both publicly available, generalizable and well-validated.
+While \textit{ensemble} methods offer a more biologically accurate view of the
+variety of chromatin folding in a population of cells, their use is more
+challenging, both as a result of a lack of comparison and validation of the
+methods, but also as large population of structures are less amenable to
+exploration and visualization than \textit{consensus} structures.
 
-model-driven methods are organisms and study specific. For each data set, the
-set of constraints need to be revisited. Yet, once built, they can be used ot
-replace high throughput FISH experiments at low cost.
+At the other end of the spectrum, model-driven methods are organisms and study
+specific, and require good understanding of both polymer physics and of the
+particular organism studied: for each data set, the set of constraints to
+apply on the structure need to be revisited and remained. Yet, once built,
+they provide extensive insights in the average location of genes and may be a
+mean to replace high throughput FISH experiments at low cost as a first
+exploration tool.
 
-Downstream analysis gave important insights in the relation between gene
-regulation and genome architecture of teh {\em P. falciparum}. Yet a lot
-remains to be done. How to compare in a meaningful manner structures from
-different time points at a genome-scale level? 
-
+While downstream analysis of the {\em P. falciparum} gave important insights
+in the relation between gene regulation and genome architecture of the {\em P.
+falciparum}, the use of 3D models for downstream analysis remains scarce in
+the literature and many avenues are left opened to methodological development.
+How to compare in a meaningful manner structures from different time points at
+a genome-scale level? 
 
 \section*{Acknowledgments}
 
