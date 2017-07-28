@@ -73,21 +73,23 @@
 
 
 \begin{abstract}
+
 The development of new means to probe samples for the three-dimensional
 structure of DNA paves the way for in depth and systematic analysis of genome
-architecture, offering new insights in many biological processes. 3C-like
-methods can now assess physical interactions between pairs of loci in a
-genome-wide fashion, thus leading to the creation of contact maps. The
+architecture. 3C-like methods coupled with high-throughput sequencing can now
+assess physical interactions between pairs of loci in a genome-wide fashion,
+thus enabling the creation of genome-by-genome contact maps. The
 democratization of such protocols creates many new opportunities for
 methodological development: how to infer 3D models from these contact maps?
 Can such models help us gain insights in biological process?
 
-Recent studies assessed {\em P. falciparum} (the deadliest of the 5
-human malaria parasites) for its genome organization using 3C-like protocol.
-With its small genomic size, fairly simple yet changing genomic organization
-across its lifecyle and strong correlation between chromatin folding and gene
-expression, this parasite is the ideal case study for applying and developing
-methods to infer 3D models and use them for downstream analysis. 
+Several recent studies applied such protocol to {\em P. falciparum} (the
+deadliest of the 5 human malaria parasites), assessing its genome organization
+at different moment of its life cycle. With its small genomic size, fairly
+simple yet changing genomic organization across its lifecyle and strong
+correlation between chromatin folding and gene expression, this parasite is
+the ideal case study for applying and developing methods to infer 3D models
+and use them for downstream analysis. 
 
 Here, I review a set of methods used to build and analyse three-dimensional
 models from contact maps data with a special highlight findings on {\em P.
@@ -146,16 +148,18 @@ a local and global scale may provide new leads for developing new therapies.
 In recent year, chromosome conformation captures-like method, broadly referred
 to as Hi-C allowed to identify physical interactions between two regions in a
 genome-wide fashion, yielding information on their relative spatial distance
-in the nucleus. Hi-C has opened new avenues for more systematic analysis of
+in the nucleus \citep{lieberman-aiden:comprehensive}. 
+Hi-C has opened new avenues for more systematic analysis of
 the three-dimensional folding of the genome, paving the way for a better
 understanding of the relations between 3D structure and gene regulation,
 replication timing, epigenetic changes as well as many other biological
-processes. The 3D genome of a wide variety of organisms has been studied in
+processes \citep{de:dna, dixon:topological, rao:3d}. 
+The 3D genome of a wide variety of organisms has been studied in
 the past year, including many species of yeasts \citep{duan:three-dimensional,
 burton:species-level, mizuguchi:cohesin-dependent}, bacteria
 \citep{umbarger:three-dimensional}, flies \citep{sexton:three-dimensional},
 plants \citep{feng:genome-wide, wang:genome-wide} and numerous human and mouse
-cell lines \citep{lieberman-aiden:comprehensive, rao:3D}. Within the past few
+cell lines \citep{lieberman-aiden:comprehensive, rao:3d, dixon:topological}. Within the past few
 years, two studies of the three-dimensional structure of {\em P. falciparum}
 have been released.  \citet{lemieux:genome-wide} probed several strains of
 {\em P. falciparum} to understand the link between 3D structure and the
@@ -168,18 +172,22 @@ complicated genome architecture, the complex life cycle and the strong link
 between chromatin folding, gene regulation and epigenetic places {\em P.
 falciparum} as an interesting case study for developing new methods for better
 understanding the properties of genome folding and its link to gene
-regulation.
+regulation \citep{ay:three-dimensional, lemieux:genome-wide, ay:multiple}.
 
 An important part of analyzing the three-dimensional structure of the genome
 of {\em P. falciparum} (as well as many other organisms) relied on the
-inferring accurate 3D models of the structure. These models were then used as
+inference of accurate 3D models of the structure
+\citep{duan:three-dimensional, ay:three-dimensional, bau:three-dimensional}. These models were then used as
 a preliminary step to various analysis, such as identifying colocalized
 elements, distinguishing between open and closed chromatin and last but not
 least, integrating with other sources of data, such as gene expression or
-chromatin modification. In recent years, a profusion of methods were developed
+chromatin modification \citep{duan:three-dimensional, bau:three-dimensional,
+ay:three-dimensional}. In recent years, a profusion of methods were developed
 for creating 3D models of the genome, either as standalone methods or with the
-specific goal to better understand an organism, a biological process (such as
-the inactivation of chromosome X) or the folding of a chromosome. These
+specific goal to better understand an organism
+\citep{umbarger:three-dimensional, ay:multiple, duan:three-dimensional} or
+a biological process (such as
+the inactivation of chromosome X) \citep{bau:three-dimensional, deng:bipartite}. These
 methods broadly fall into two categories: ``model-based'' and ``data-driven''.
 The former methods consider the polymer nature of DNA to leverage the
 theoretical and computational work done in statistical physics of polymers to
@@ -206,19 +214,23 @@ particular focus on discoveries on {\em P. falciparum} genome architecture.
 \begin{figure}
 \centering
 \includegraphics[width=0.5\linewidth]{schemas/schema.pdf}
-\caption{The art of understanding 3D genome structure}
+\caption{Understanding 3D genome structure using contact maps}
 \label{Fig1}
 \end{figure}
 
 
-\section*{``Data-driven'' three-dimensional models of DNA from contact maps}
+\section*{Inferring three-dimensional models of DNA from contact maps}
 
 The development of genome-wide and high-throughput protocols to probe samples
 for their 3D genome architecture naturally paved the way to systematic and in
 depth study of the folding mechanisms of DNA. Over the past 10 years, the
 challenge of building 3D models from contact maps have been tackled by a
 plethora of methods, some developed for a particular organisms, others with
-the hope to be generalizable to any data sets. Methods model chromosomes as a
+the hope to be generalizable to any data sets \citep{dekker:capturing,
+duan:three-dimensional, tanizawa:mapping, ay:three-dimensional,
+peng:sequencing, lesne:3d, ben-elazar:spatial, zhang:inference, trieu:large,
+trieu:MOGEN, trieu:3D, bau:three-dimensional, umbarger:three-dimensional,
+rousseau:three, hu:bayesian}. Methods model chromosomes as a
 series of beads, and attempt to place the beads in a 3D euclidean space to
 well represent the contact map. ``data-driven'' methods broadly fall into two
 categories: (i) \textit{consensus} approaches, that aim at inferring a unique
@@ -307,9 +319,10 @@ count-to-distance mapping by fitting the relationship using known pairwise
 distances obtained through high-resolution FISH measures. In brief, there are
 as many ways to derive the count-to-distance mapping as there are of studies.
 
-\citet{lesne:3d} proposes a different approach to convert counts into
-distances: they borrow the concept of shortest path from graph theory to
-create a distance matrix. A graph is constructed from the contact map by
+\citet{lesne:3d, hirata:three-dimensional} proposes a different approach to convert counts into
+distances: they borrow concepts from graph theory to
+create a distance matrix (either using shortest-path algorithm or Djikstra
+algorithm). A graph is constructed from the contact map by
 considering each loci as a node. Loci seen interacting are connected through
 an edge of weight $\frac{1}{c_{ij}}$. The authors then compute wish-distances
 $\delta_{ij}$ as the shortest path between node $i$ and $j$ in the graph.
@@ -322,8 +335,9 @@ In addition of having subtle differences in the derivation of wish distances
 (which can have important effects on the resulting structures),
 the different methods also vary by the inclusion of weights to reflect
 confidence in ``wish-distances'' \citep{ay:three-dimensional}, or constraints
-to reflect prior knowledge on the structure. See table~\ref{table:mds_detail}
-for a summary of the characteristic of each method.
+to reflect prior knowledge on the structure \citep{ay:three-dimensional,
+dekker:capturing, duan:three-dimensional} (see Table~\ref{table:mds_detail}
+for a summary of the characteristic of each method).
 
 \begin{table*}
 \scriptsize
@@ -427,8 +441,6 @@ wish-distance $\delta_{ij}$ and the euclidean distance $d_{ij}$ between bead
 $i$ and $j$ similarly to MDS-based method, but exploiting the property of the
 Loretzian function to have very high derivative when constraints are broken.
 
-\fixme{maybe skip this section}
-
 
 \subsubsection*{Statistical models for contact counts}
 
@@ -482,15 +494,15 @@ noise through the statistical model (See figure~\ref{fig:3D_structures}).
 
 \subsection*{Ensemble methods as a mean to infer population of structures}
 
-{\em Ensemble approaches} aim at inferring a population of structures
+{\em Ensemble} approaches aim at inferring a population of structures
 representative of the contact count map. The methods fall into two distinct
 categories: the first type of problem casts a restraint-based 
 optimization problem and sample local minima of the function
 \citep{bau:three-dimensional, umbarger:three-dimensional}, while the second
 type proposes a statistical modeling of the problem and samples the posterior
-distribution \citep{rousseau:three, hu:bayesian}. A parallel can be made
-between the first group of methods and {\em Consensus} MDS type of approaches,
-and the second with {\em Consensus} statistical based methods.
+distribution \citep{rousseau:three, hu:bayesian}. In short, the former is the
+{\em ensemble} version of MDS-based and {\em ad hoc} methods, while the former the
+{\em ensemble} version of statistical based methods.
 
 \subsubsection*{Sampling local minima}
 
@@ -498,13 +510,12 @@ and the second with {\em Consensus} statistical based methods.
 chromosomes as a series of beads, linked by restraining oscillators. These
 oscillators can be thought of as a ``force'' between beads so that they come
 into contact or ensure a minimal or maximal distance between those. The models
-includes three different types of restraints: (i) beads seen interacting are
+includes two different types of restraints: (i) beads seen interacting are
 restrained with harmonic oscillators of strengths derived from the contact
 counts; (ii) adjacent beads are ensured to be neither too close nor too far
-from one another; (iii) the last oscillators are activated only when
-constraints are not fulfilled to \todo{XXX}.  This yields an optimization problem
-with a large number of local minima, which the authors sample from by running
-50,000 minimizations starting from random starts.
+from one another.  This yields an optimization problem with a large number of
+local minima, which the authors sample from by running 50,000 minimization
+starting from random starts.
 
 \subsubsection*{Estimating the posterior distribution of a statistical model}
 
@@ -529,19 +540,16 @@ data sets are today publicly available. The contact maps originating from
 these data sets are very sparse, and specific methods to infer 3D structures
 need to be developed specifically for sc-HiC. 
 
-Akin to {\em consensus} MDS-like method and {\em ensemble}-local minima
-methods,  the first approach is to consider each contact as a constraint and
-to formulate an under constrained optimization problem. A population of
-structures satisfying the constraints can be found by sampling local
-minimas.
-
-\citet{paulsen:manifold} proposes a very different method, and formulate a
-\textit{manifold based optimization}, where a low rank PSD matrix (and thus a
-distance matrix) is optimized to be as close as possible to the sparse contact
-count matrix. Applying classical MDS on this low rank PSD matrix then yields a
-\textit{consensus} 3D model of the genome.
-
-\fixme{hirata et al}
+Akin to {\em ensemble}-local minima methods,  the first approach is to
+consider each contact as a constraint and to formulate an under constrained
+optimization problem. A population of structures satisfying the constraints
+can be found by sampling local minimas \citep{nagano:single-cell}.
+Akin to {\em consensus method}, one can attempt to construct a distance
+matrix, either through manifold-based optimization \citep{paulsen:manifold}
+(by finding a low rank PSD approximation of the sparse contact map) or
+akin to ShRec3D, through graph-theory considering the weighted graph of
+interactions \citep{hirata:three-dimensional}. A classical MDS method applied
+to such distance matrix then yields a \textit{consensus} 3D model of the genome.
 
 \begin{table}[ht!]
 \begin{center}
@@ -574,7 +582,8 @@ count matrix. Applying classical MDS on this low rank PSD matrix then yields a
 \scriptsize{\cite{trieu:3D}} & & C & &  & \\
 \scriptsize{\cite{trieu:MOGEN}} & MOGEN & C & & & \\
 \scriptsize{\cite{nagano:single-cell}} & & E & & & \\
-\scriptsize{\cite{paulsen:manifold}} & & C & \CHECK & & \CHECK \\
+\scriptsize{\cite{paulsen:manifold}} & MBO & C & \CHECK & & \CHECK \\
+\scriptsize{\cite{hirata:three-dimensional}} & RPR & C & \CHECK & & \\
 \hline
 \end{tabular}
 \end{center}
@@ -619,20 +628,22 @@ These are a handfull of ways to assess plausibility and accuracy of 3D
 reconstruction, but many avenues in model evaluation and comparison are yet to
 be explored.
 
-\section*{The art of modeling genome architecture.}
+\section*{The art of modeling genome architecture}
 
 ``Data-driven'' methods, as presented in the last section, use the
 experimental contact maps to infer models as consistent as possible with the
 data. ``Model-driven'' tackle the 3D-modeling challenge exactly in the
 opposite manner. Consider the following task. You have a tens of thousands of
-randomly placed beads-on-strings. Can you find the smallest sets of
+randomly placed beads-on-a-string. Can you find the smallest sets of
 constraints such that these beads-on-a-string interact overall the same way as
 a given contact map? This is the daunting task accomplished by
 ``model-driven'' approach: chromosomes are modeled as polymers (or random
 self-excluding fibers) under a small number constraints such that a generated
 contact maps from these models match as closely as possible the observed
-contact maps. These ``model-driven'' approaches offer mechanistical insights
-into the genome architecture.
+contact maps. These ``model-driven'' approaches offer powerful mechanistical
+insights into the genome architecture, but are difficult to build in practice:
+each organism, cell type, and time point require hand crafted sets of
+constrained, build by iteratively improving models.
 
 \subsection*{Building a yeast nucleus}
 
