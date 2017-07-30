@@ -12,9 +12,10 @@ from iced.io import load_lengths
 parser = argparse.ArgumentParser()
 parser.add_argument("directory")
 parser.add_argument("--lengths", "-l")
+parser.add_argument("--factor", type=int, default=10)
 args = parser.parse_args()
 
-
+factor = args.factor
 if args.lengths is not None:
     lengths = load_lengths(args.lengths)
 else:
@@ -43,7 +44,7 @@ for i, filename in enumerate(filenames):
     dis = euclidean_distances(X)
     dis[mask] = np.nan
     dis[:, mask] = np.nan
-    dis, lengths_ = downsample_resolution(dis, lengths, factor=10)
+    dis, lengths_ = downsample_resolution(dis, lengths, factor=factor)
     distances.append(dis[np.triu_indices(dis.shape[0])][np.newaxis])
 
 distances = np.concatenate(distances)

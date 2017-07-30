@@ -9,7 +9,9 @@ parser.add_argument("--algorithm", "-a", default="MDS")
 parser.add_argument("--chromosome", "-c", default=None, type=int)
 args = parser.parse_args()
 
-datasets = ["rings", "schizonts", "trophozoites"]
+datasets = ["ay2013/rings_10000",
+            "ay2013/schizonts_10000", "ay2013/trophozoites_10000",
+            "lemieux2013/25kb/B15C2_combined"]
 algorithm = args.algorithm
 
 labels = None
@@ -17,11 +19,11 @@ X = None
 for i, dataset in enumerate(datasets):
     if args.chromosome is None:
         filename = (
-            "results/ay2013/%s_10000_raw_%s_distances_downsampled.npy" % (
+            "results/%s_raw_%s_distances_downsampled.npy" % (
                 dataset, algorithm))
     else:
         filename = (
-            "results/ay2013/%s_10000_raw_%s_distances_chr%02d.npy" % (
+            "results/%s_raw_%s_distances_chr%02d.npy" % (
                 dataset, algorithm, args.chromosome))
     x = np.load(filename)
     x = x[:1000]
@@ -45,7 +47,7 @@ colors = ['#FFB773', '#FF7C00', "r",  # '#A65100',
           '#04859D', 'skyblue',
           '#015666', 'green', 'darkgreen']
 markers = [".", ".", ".", "D", "D", "D"]
-stages = ["Rin", "Sch", "Trop"]
+stages = ["Ay-Rin", "Ay-Sch", "Ay-Trop", "Lemieux-Rin"]
 
 pca = PCA(n_components=3, copy=False, random_state=1, svd_solver="randomized")
 X = pca.fit_transform(X)
