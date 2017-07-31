@@ -1,2 +1,5 @@
 slurm*
 results
+figures
+.joblib
+old*
