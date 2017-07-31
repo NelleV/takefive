@@ -53,7 +53,7 @@ pca = PCA(n_components=3, copy=False, random_state=1, svd_solver="randomized")
 X = pca.fit_transform(X)
 fig, (ax1, ax2) = plt.subplots(
     ncols=2,
-    figsize=(12, 6),
+    figsize=(14, 5),
     subplot_kw={"aspect": 1})
 
 for i in range(len(datasets)):
