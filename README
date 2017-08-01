@@ -91,3 +91,8 @@ Organizing Computational Biology Projects".
 	
 	python clustering_across_stages_downsampled_distances.py -a PO
 
+
+
+TODO
+- extract useful code from minorswing and add it either to pastis or iced
+- make sure anyone can download structures
