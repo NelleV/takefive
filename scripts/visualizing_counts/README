@@ -1,0 +1,17 @@
+Visualizing counts
+==================
+
+This folder contains the code use to visualize normalized contact counts and
+O/E matrices.
+
+To reproduce figure 3, run the following command::
+
+  python figure_counts.py
+
+To generate the whole set of contact maps images, simply type::
+
+  make
+
+This will (1) normalize the data using iced; (2) plot the contact counts maps
+genome-wide and chromosome per chromosome; (3) plot the O/E maps both
+genome-wide and chromosome per chromosome.

@@ -5,3 +5,89 @@ by Nelle Varoquaux
 This git repository contains all the scripts to reproduce the results and
 figures of the paper entitled "Unfolding the genome: the case study of P.
 falciparum".
+
+The repository is organized following the guidelines of "A Quick Guide to
+Organizing Computational Biology Projects".
+
+  - the *data* lies into the folder called ``data``. To download it
+    automatically, just go in that folder and type make. Else, make sure to
+    follow the README in this particular folder to organize the data properly.
+  - the `script` folder contains all the scripts necessary to reproduce the
+    figures of the article. Precisely,
+      - "Figure 3: contact maps of P. falciparum's chr7" can be reproduced by
+        running `figure_counts.py` in `scripts/visualizing_counts`.
+      - "Figure 4:" 3D models of P. falciparum's genome architecture"'s code
+        is contained in `scripts/structures` and can be
+        reproduced by:
+	- Inferring the MDS structures for ay-trophozoites and lemieux-B15C2::
+
+	  python infer_structures_mds.py \
+	      --lengths data/ay2013/trophozoites_10000_raw.bed \
+	      data/ay2013/trophozoites_10000_raw.matrix
+	  python infer_structures_mds.py \
+	      --lengths data/lemieux2013/25kb/B15C2_combined_raw.bed \
+	      data/lemieux2013/25kb/B15C2_combined_raw.matrix
+
+
+	- Inferring the PO structure for the same data sets::
+
+	  python infer_structures_po.py \
+	      --lengths data/ay2013/trophozoites_10000_raw.bed \
+	      data/ay2013/trophozoites_10000_raw.matrix
+	  python infer_structures_po.py \
+	      --lengths data/lemieux2013/25kb/B15C2_combined_raw.bed \
+	      data/lemieux2013/25kb/B15C2_combined_raw.matrix
+
+	- Visualize the structures::
+
+	   python plot_results.py \
+	    results/lemieux2013/25kb/B15C2_combined_raw_PO_01_structure.txt \
+	    --lengths data/lemieux2013/25kb/A44_combined_raw.bed \
+  	    --resolution 25000
+	   python plot_results.py \
+	    results/ay2013/trophozoites_10000_raw_PO_01_structure.txt \
+	      --lengths data/lemieux2013/25kb/B15C2_combined_raw.bed \
+	      --resolution 10000
+      - "Figure 5: Volume Exclusion Modeling" can be reproduced from the
+	`scripts/volume_exclusion` folder using the following steps.
+	- Generating a large number of VE-structures using the following
+	  command::
+
+	    python plasmo_landmark_without_VRSM.py \
+	      -s troph \
+	      SEED
+
+	 where SEED is a the seed number. In the paper, I used seeds ranging
+	 from 1 to 5000. Count 1 hour per structures. A slurm script is
+	 avalailable in cluster_scripts. More information in
+	 `scripts/volume_exclusion/README`.
+	- Then, run::
+
+	    python create_and_plot_ve_counts.py
+      - "Figure 6: Stability of structures across the life cycle"'s code is in
+	`scripts/population_structures`. But first, 1000 structures for
+	ay-ring, ay-troph, ay-schizont and lemieux-B15C2 need to be computed.
+	I can provide the set of structures upon demand. Then:
+	- Create the feature matrices::
+
+	  python compute_downsampled_distances.py \
+	    structures/ay2013/rings_10000_raw_PO \
+	    --lengths data/ay2013/rings_10000_raw.bed
+
+	  python compute_downsampled_distances.py \
+	    structures/ay2013/schizonts_10000_raw_PO \
+	    --lengths data/ay2013/rings_10000_raw.bed
+
+	  python compute_downsampled_distances.py \
+	    structures/ay2013/trophozoites_10000_raw_PO \
+	    --lengths data/ay2013/rings_10000_raw.bed
+
+	  python compute_downsampled_distances.py \
+	    structures/lemieux2013/25kb/B15C2_combined_raw_PO \
+	    --factor 4 \
+	    --lengths data/lemieux2013/25kb/DCJ_On_combined_raw.bed
+
+      - And compute the stochastic PCA::
+	
+	python clustering_across_stages_downsampled_distances.py -a PO
+

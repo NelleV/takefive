@@ -31,7 +31,7 @@ lengths = [int(chr_seq["chr0%d" % int(d)]) for d in range(1, 10)] + \
 lengths = np.round(np.array(lengths) / 9600.).astype(int)
 
 
-def build_counts(thres=45):
+def build_counts(filenames, thres=45):
     # Only displaying chromosome 7
     counts = None
 
@@ -51,7 +51,7 @@ def build_counts(thres=45):
     return counts
 
 
-counts = mem.cache(build_counts)(thres=75)
+counts = mem.cache(build_counts)(filenames, thres=75)
 counts = counts.astype(float)
 n = counts.shape[0]
 idx = np.arange(n)
