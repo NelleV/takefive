@@ -3,11 +3,9 @@ from scipy import sparse
 import os
 import argparse
 from pastis import fastio
-from minorswing import dispersion
-from minorswing._inference import poisson_structure
+from pastis.optimization import poisson_structure
 from pastis.optimization import mds
 from utils import compute_wish_distances
-from minorswing._inference import utils
 import iced
 from sklearn.metrics import euclidean_distances
 
@@ -50,7 +48,7 @@ counts = counts.tocsr()
 counts.eliminate_zeros()
 counts = counts.tocoo()
 
-print "Normalizing"
+print("Normalizing")
 
 counts = counts.toarray()
 counts = counts + counts.T
@@ -78,7 +76,7 @@ normed.eliminate_zeros()
 normed = normed.tocoo()
 
 # Compute starting point
-print "Initializing"
+print("Initializing")
 random_state = np.random.RandomState(args.seed)
 wd = compute_wish_distances(normed)
 X = mds.estimate_X(wd, random_state=random_state,
@@ -90,7 +88,7 @@ outname = filename.replace(
     ".matrix", "_PO_%02d_structure.txt" % (args.seed, ))
 
 if os.path.exists(outname):
-    print "Already computed"
+    print("Already computed")
     import sys
     #sys.exit()
 
@@ -123,4 +121,4 @@ mask = (np.array(counts.sum(axis=0)) +
 X[mask] = np.nan
 
 np.savetxt(outname, X)
-print "Finished", outname
+print("Finished", outname)

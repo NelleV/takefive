@@ -3,12 +3,7 @@ from scipy import sparse
 import os
 import argparse
 from pastis import fastio
-from minorswing import dispersion
-#from minorswing._inference import negative_binomial
-from minorswing._inference import negative_binomial_structure
-#from pastis.optimization import negative_binomial_structure
 from pastis.optimization import mds
-from minorswing._inference import utils
 import iced
 from utils import compute_wish_distances
 
@@ -52,7 +47,7 @@ counts = counts.tocsr()
 counts.eliminate_zeros()
 counts = counts.tocoo()
 
-print "Normalizing"
+print("Normalizing")
 
 counts = counts.toarray()
 counts = counts + counts.T
@@ -81,7 +76,7 @@ normed.eliminate_zeros()
 normed = normed.tocoo()
 
 # Compute starting point
-print "Estimating structure"
+print("Estimating structure")
 
 random_state = np.random.RandomState(args.seed)
 
@@ -95,4 +90,4 @@ mask = (np.array(counts.sum(axis=0)) +
 X[mask] = np.nan
 
 np.savetxt(outname, X)
-print "Finished", outname
+print("Finished", outname)
