@@ -14,6 +14,14 @@ import numpy as np
 import time
 import argparse
 
+class Chain:
+    def __init__(self,list):
+        self.list = list
+    def get_particle(self,i):
+        return self.list[i]
+
+
+
 parser = argparse.ArgumentParser(description='Run volume exclusion model')
 parser.add_argument('seed', metavar='N', type=int,
                     help='seed')
@@ -38,7 +46,7 @@ else:
 basedir = os.path.dirname(os.path.realpath(__file__))
 outname = os.path.join(basedir, "results", "without_VRSM",
                        '%s_plasmodium_%004d.txt' % (state, args.seed))
-print('output pdb:', outname)
+print('output:', outname)
 
 if os.path.exists(outname):
     sys.exit(0)
@@ -99,17 +107,17 @@ chr_bead = {}    # number of beads for each chromosome
 nbead = 0
 bead_start = {}  # bead label starts of a chr
 for i in sorted(chr_seq.keys()):
-    n = chr_seq[i] / sep + 1
+    n = int(chr_seq[i] / sep) + 1
     chr_bead[i] = n
     nbead = nbead + n
     bead_start[i] = nbead - n
 
-startChr_pdb = []  # indexing starts from 0
-n = 0
-startChr_pdb.append(n)
-for chrom in chain_list:
-    n += chr_bead[chrom]
-    startChr_pdb.append(n)
+# startChr_pdb = []  # indexing starts from 0
+# n = 0
+# startChr_pdb.append(n)
+# for chrom in chain_list:
+#     n += chr_bead[chrom]
+#     startChr_pdb.append(n)
 
 
 # FUNCTIONS --------------------------------------------------------- start
@@ -151,7 +159,7 @@ def pdboutput(name=None):
     X = []
     for i in range(nbead):
         p0 = IMP.core.XYZR(chain.get_particle(i))
-        chr_num = filter(lambda k: bead_start[k] <= i, chr_seq.keys())[-1]
+        chr_num = list(filter(lambda k: bead_start[k] <= i, chr_seq.keys()))[-1]
         X.append([int(chr_num[3:]), p0.get_x(), p0.get_y(), p0.get_z()])
     return X
 
@@ -189,7 +197,9 @@ lb = 30.0  # length of bond
 kbend = 0.2
 contact_dict = {}
 xyzr = IMP.core.create_xyzr_particles(m, nbead, r)
-chain = IMP.container.ListSingletonContainer(xyzr)
+#chain = IMP.container.ListSingletonContainer(xyzr)
+chain_obj = IMP.container.ListSingletonContainer(m, xyzr)
+chain = Chain(xyzr)
 
 # First beads
 corner1 = IMP.algebra.Vector3D(-nuclear_rad, -nuclear_rad, -nuclear_rad)
@@ -232,7 +242,7 @@ br = IMP.container.SingletonsRestraint(bss, bonds)
 # m.add_restraint(br)  # 0
 
 # Set up excluded volume
-evr = IMP.core.ExcludedVolumeRestraint(chain)
+evr = IMP.core.ExcludedVolumeRestraint(chain_obj)
 # m.add_restraint(evr)  # 1
 
 
@@ -249,7 +259,7 @@ o.set_scoring_function(sf)
 center = IMP.algebra.Vector3D(0, 0, 0)
 ubcell = IMP.core.HarmonicUpperBound(nuclear_rad, 1.0)
 sscell = IMP.core.DistanceToSingletonScore(ubcell, center)
-rcell = IMP.container.SingletonsRestraint(sscell, chain)
+rcell = IMP.container.SingletonsRestraint(sscell, chain_obj)
 # m.add_restraint(rcell)  # 2
 
 # centromers in radius 300 @-700
